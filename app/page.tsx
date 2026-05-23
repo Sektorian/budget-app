@@ -25,6 +25,23 @@ export default function Page() {
   const [actualAdvanceIncome, setActualAdvanceIncome] =
     useState(0);
 
+  // EDIT MODE
+  const [editBaseSalary, setEditBaseSalary] =
+    useState(false);
+
+  const [editEmploymentRate, setEditEmploymentRate] =
+    useState(false);
+
+  const [editWorkingHours, setEditWorkingHours] =
+    useState(false);
+
+  const [editProjectHours, setEditProjectHours] =
+    useState(false);
+
+  const [editRegularHours, setEditRegularHours] =
+    useState(false);
+
+  // CALCULATIONS
   const projectIncome =
     (baseSalary / workingHoursPrevMonth) *
     projectHours *
@@ -61,7 +78,7 @@ export default function Page() {
     },
     {
       id: "planning",
-      label: "Планирование",
+      label: "План",
     },
     {
       id: "expenses",
@@ -105,7 +122,7 @@ export default function Page() {
 
             <div>
 
-              <div className="mb-4">
+              <div style={{ marginBottom: "16px" }}>
 
                 <h2 className="section-title">
                   Доходы
@@ -182,15 +199,32 @@ export default function Page() {
                   }}
                 >
 
+                  {/* ОКЛАД */}
                   <div>
 
-                    <p className="card-label">
-                      Оклад
-                    </p>
+                    <div className="input-header">
+
+                      <p className="card-label">
+                        Оклад
+                      </p>
+
+                      <button
+                        className="edit-button"
+                        onClick={() =>
+                          setEditBaseSalary(
+                            !editBaseSalary
+                          )
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                    </div>
 
                     <input
                       type="number"
                       value={baseSalary}
+                      disabled={!editBaseSalary}
                       onChange={(e) =>
                         setBaseSalary(
                           Number(e.target.value)
@@ -201,16 +235,33 @@ export default function Page() {
 
                   </div>
 
+                  {/* СТАВКА */}
                   <div>
 
-                    <p className="card-label">
-                      Ставка
-                    </p>
+                    <div className="input-header">
+
+                      <p className="card-label">
+                        Ставка
+                      </p>
+
+                      <button
+                        className="edit-button"
+                        onClick={() =>
+                          setEditEmploymentRate(
+                            !editEmploymentRate
+                          )
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                    </div>
 
                     <input
                       type="number"
                       step="0.1"
                       value={employmentRate}
+                      disabled={!editEmploymentRate}
                       onChange={(e) =>
                         setEmploymentRate(
                           Number(e.target.value)
@@ -221,15 +272,32 @@ export default function Page() {
 
                   </div>
 
+                  {/* ЧАСЫ */}
                   <div>
 
-                    <p className="card-label">
-                      Рабочих часов в прошлом месяце
-                    </p>
+                    <div className="input-header">
+
+                      <p className="card-label">
+                        Рабочих часов в прошлом месяце
+                      </p>
+
+                      <button
+                        className="edit-button"
+                        onClick={() =>
+                          setEditWorkingHours(
+                            !editWorkingHours
+                          )
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                    </div>
 
                     <input
                       type="number"
                       value={workingHoursPrevMonth}
+                      disabled={!editWorkingHours}
                       onChange={(e) =>
                         setWorkingHoursPrevMonth(
                           Number(e.target.value)
@@ -240,15 +308,32 @@ export default function Page() {
 
                   </div>
 
+                  {/* ПРОЕКТНЫЕ */}
                   <div>
 
-                    <p className="card-label">
-                      ПРОЕКТНЫЕ (часы)
-                    </p>
+                    <div className="input-header">
+
+                      <p className="card-label">
+                        ПРОЕКТНЫЕ (часы)
+                      </p>
+
+                      <button
+                        className="edit-button"
+                        onClick={() =>
+                          setEditProjectHours(
+                            !editProjectHours
+                          )
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                    </div>
 
                     <input
                       type="number"
                       value={projectHours}
+                      disabled={!editProjectHours}
                       onChange={(e) =>
                         setProjectHours(
                           Number(e.target.value)
@@ -259,15 +344,32 @@ export default function Page() {
 
                   </div>
 
+                  {/* РЕГУЛЯРНЫЕ */}
                   <div>
 
-                    <p className="card-label">
-                      РЕГУЛЯРНЫЕ (часы)
-                    </p>
+                    <div className="input-header">
+
+                      <p className="card-label">
+                        РЕГУЛЯРНЫЕ (часы)
+                      </p>
+
+                      <button
+                        className="edit-button"
+                        onClick={() =>
+                          setEditRegularHours(
+                            !editRegularHours
+                          )
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                    </div>
 
                     <input
                       type="number"
                       value={regularHours}
+                      disabled={!editRegularHours}
                       onChange={(e) =>
                         setRegularHours(
                           Number(e.target.value)
@@ -389,19 +491,11 @@ export default function Page() {
 
           )}
 
-          {/* ПЛАНИРОВАНИЕ */}
+          {/* ПЛАН */}
           {activeTab === "planning" && (
 
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
-              Планирование
+            <div className="empty-tab">
+              План
             </div>
 
           )}
@@ -409,15 +503,7 @@ export default function Page() {
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
 
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
+            <div className="empty-tab">
               Расходы
             </div>
 
@@ -426,15 +512,7 @@ export default function Page() {
           {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
 
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
+            <div className="empty-tab">
               Статистика
             </div>
 
