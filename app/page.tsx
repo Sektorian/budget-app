@@ -46,7 +46,7 @@ export default function Page() {
   const [
     baseSalaryInput,
     setBaseSalaryInput,
-  ] = useState("4500");
+  ] = useState("2900");
 
   const [
     employmentRateInput,
@@ -61,12 +61,12 @@ export default function Page() {
   const [
     projectHoursInput,
     setProjectHoursInput,
-  ] = useState("32");
+  ] = useState("0");
 
   const [
     regularHoursInput,
     setRegularHoursInput,
-  ] = useState("96");
+  ] = useState("0");
 
   const [
     actualSalaryIncomeInput,
