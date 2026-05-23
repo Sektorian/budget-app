@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import "./styles.css";
 
 export default function Page() {
@@ -25,28 +25,6 @@ export default function Page() {
   const [actualAdvanceIncome, setActualAdvanceIncome] =
     useState(0);
 
-  // MODAL
-  const [isModalOpen, setIsModalOpen] =
-    useState(false);
-
-  const [modalValue, setModalValue] =
-    useState("");
-
-  const [modalField, setModalField] =
-    useState("");
-
-  const inputRef =
-    useRef<HTMLInputElement>(null);
-
-  // AUTO SELECT
-  useEffect(() => {
-    if (isModalOpen && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isModalOpen]);
-
-  // CALCULATIONS
   const projectIncome =
     (baseSalary / workingHoursPrevMonth) *
     projectHours *
@@ -95,57 +73,6 @@ export default function Page() {
     },
   ];
 
-  // OPEN MODAL
-  const openEditModal = (
-    field: string,
-    value: number
-  ) => {
-    setModalField(field);
-    setModalValue(String(value));
-    setIsModalOpen(true);
-  };
-
-  // SAVE VALUE
-  const saveModalValue = () => {
-    let result = 0;
-
-    try {
-      result = Function(
-        `"use strict"; return (${modalValue})`
-      )();
-    } catch {
-      result = Number(modalValue);
-    }
-
-    if (isNaN(result)) {
-      result = 0;
-    }
-
-    switch (modalField) {
-      case "baseSalary":
-        setBaseSalary(result);
-        break;
-
-      case "employmentRate":
-        setEmploymentRate(result);
-        break;
-
-      case "workingHoursPrevMonth":
-        setWorkingHoursPrevMonth(result);
-        break;
-
-      case "projectHours":
-        setProjectHours(result);
-        break;
-
-      case "regularHours":
-        setRegularHours(result);
-        break;
-    }
-
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="app-container">
 
@@ -178,7 +105,7 @@ export default function Page() {
 
             <div>
 
-              <div style={{ marginBottom: "16px" }}>
+              <div className="mb-4">
 
                 <h2 className="section-title">
                   Доходы
@@ -190,14 +117,13 @@ export default function Page() {
 
               </div>
 
-              {/* CARD */}
+              {/* КОМПО */}
               <div className="card">
 
                 <div
                   style={{
                     display: "flex",
-                    justifyContent:
-                      "space-between",
+                    justifyContent: "space-between",
                     alignItems: "flex-start",
                     marginBottom: "16px",
                   }}
@@ -207,17 +133,9 @@ export default function Page() {
                     КОМПО
                   </h3>
 
-                  <div
-                    style={{
-                      textAlign: "right",
-                    }}
-                  >
+                  <div style={{ textAlign: "right" }}>
 
-                    <div
-                      style={{
-                        marginBottom: "12px",
-                      }}
-                    >
+                    <div style={{ marginBottom: "12px" }}>
 
                       <p className="card-label">
                         Планируемый доход
@@ -256,7 +174,13 @@ export default function Page() {
                 </div>
 
                 {/* INPUTS */}
-                <div className="inputs-column">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
 
                   {/* ОКЛАД */}
                   <div>
@@ -265,28 +189,33 @@ export default function Page() {
                       Оклад
                     </p>
 
-                    <div className="input-row">
+                    <input
+                      type="text"
+                      value={baseSalary}
+                      onFocus={(e) =>
+                        e.target.select()
+                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
 
-                      <input
-                        type="text"
-                        value={baseSalary}
-                        readOnly
-                        className="input"
-                      />
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
 
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          openEditModal(
-                            "baseSalary",
-                            baseSalary
-                          )
+                          setBaseSalary(
+                            Number(result)
+                          );
+                        } catch {
+                          setBaseSalary(
+                            Number(value) || 0
+                          );
                         }
-                      >
-                        ✎
-                      </button>
-
-                    </div>
+                      }}
+                      className="input"
+                    />
 
                   </div>
 
@@ -297,62 +226,72 @@ export default function Page() {
                       Ставка
                     </p>
 
-                    <div className="input-row">
+                    <input
+                      type="text"
+                      value={employmentRate}
+                      onFocus={(e) =>
+                        e.target.select()
+                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
 
-                      <input
-                        type="text"
-                        value={employmentRate}
-                        readOnly
-                        className="input"
-                      />
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
 
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          openEditModal(
-                            "employmentRate",
-                            employmentRate
-                          )
+                          setEmploymentRate(
+                            Number(result)
+                          );
+                        } catch {
+                          setEmploymentRate(
+                            Number(value) || 0
+                          );
                         }
-                      >
-                        ✎
-                      </button>
-
-                    </div>
+                      }}
+                      className="input"
+                    />
 
                   </div>
 
-                  {/* ЧАСЫ */}
+                  {/* РАБОЧИЕ ЧАСЫ */}
                   <div>
 
                     <p className="card-label">
-                      Рабочих часов
+                      Рабочих часов в прошлом месяце
                     </p>
 
-                    <div className="input-row">
+                    <input
+                      type="text"
+                      value={
+                        workingHoursPrevMonth
+                      }
+                      onFocus={(e) =>
+                        e.target.select()
+                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
 
-                      <input
-                        type="text"
-                        value={
-                          workingHoursPrevMonth
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
+
+                          setWorkingHoursPrevMonth(
+                            Number(result)
+                          );
+                        } catch {
+                          setWorkingHoursPrevMonth(
+                            Number(value) || 0
+                          );
                         }
-                        readOnly
-                        className="input"
-                      />
-
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          openEditModal(
-                            "workingHoursPrevMonth",
-                            workingHoursPrevMonth
-                          )
-                        }
-                      >
-                        ✎
-                      </button>
-
-                    </div>
+                      }}
+                      className="input"
+                    />
 
                   </div>
 
@@ -360,31 +299,36 @@ export default function Page() {
                   <div>
 
                     <p className="card-label">
-                      ПРОЕКТНЫЕ
+                      ПРОЕКТНЫЕ (часы)
                     </p>
 
-                    <div className="input-row">
+                    <input
+                      type="text"
+                      value={projectHours}
+                      onFocus={(e) =>
+                        e.target.select()
+                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
 
-                      <input
-                        type="text"
-                        value={projectHours}
-                        readOnly
-                        className="input"
-                      />
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
 
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          openEditModal(
-                            "projectHours",
-                            projectHours
-                          )
+                          setProjectHours(
+                            Number(result)
+                          );
+                        } catch {
+                          setProjectHours(
+                            Number(value) || 0
+                          );
                         }
-                      >
-                        ✎
-                      </button>
-
-                    </div>
+                      }}
+                      className="input"
+                    />
 
                   </div>
 
@@ -392,31 +336,36 @@ export default function Page() {
                   <div>
 
                     <p className="card-label">
-                      РЕГУЛЯРНЫЕ
+                      РЕГУЛЯРНЫЕ (часы)
                     </p>
 
-                    <div className="input-row">
+                    <input
+                      type="text"
+                      value={regularHours}
+                      onFocus={(e) =>
+                        e.target.select()
+                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
 
-                      <input
-                        type="text"
-                        value={regularHours}
-                        readOnly
-                        className="input"
-                      />
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
 
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          openEditModal(
-                            "regularHours",
-                            regularHours
-                          )
+                          setRegularHours(
+                            Number(result)
+                          );
+                        } catch {
+                          setRegularHours(
+                            Number(value) || 0
+                          );
                         }
-                      >
-                        ✎
-                      </button>
-
-                    </div>
+                      }}
+                      className="input"
+                    />
 
                   </div>
 
@@ -439,17 +388,30 @@ export default function Page() {
                     </p>
 
                     <input
-                      type="number"
-                      value={
-                        actualSalaryIncome
+                      type="text"
+                      value={actualSalaryIncome}
+                      onFocus={(e) =>
+                        e.target.select()
                       }
-                      onChange={(e) =>
-                        setActualSalaryIncome(
-                          Number(
-                            e.target.value
-                          )
-                        )
-                      }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
+
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
+
+                          setActualSalaryIncome(
+                            Number(result)
+                          );
+                        } catch {
+                          setActualSalaryIncome(
+                            Number(value) || 0
+                          );
+                        }
+                      }}
                       className="input"
                     />
 
@@ -462,17 +424,32 @@ export default function Page() {
                     </p>
 
                     <input
-                      type="number"
+                      type="text"
                       value={
                         actualAdvanceIncome
                       }
-                      onChange={(e) =>
-                        setActualAdvanceIncome(
-                          Number(
-                            e.target.value
-                          )
-                        )
+                      onFocus={(e) =>
+                        e.target.select()
                       }
+                      onChange={(e) => {
+                        const value =
+                          e.target.value;
+
+                        try {
+                          const result =
+                            Function(
+                              `"use strict"; return (${value})`
+                            )();
+
+                          setActualAdvanceIncome(
+                            Number(result)
+                          );
+                        } catch {
+                          setActualAdvanceIncome(
+                            Number(value) || 0
+                          );
+                        }
+                      }}
                       className="input"
                     />
 
@@ -541,28 +518,58 @@ export default function Page() {
 
           {/* ПЛАН */}
           {activeTab === "planning" && (
-            <div className="empty-tab">
-              План
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
+              Планирование
             </div>
+
           )}
 
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
-            <div className="empty-tab">
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
               Расходы
             </div>
+
           )}
 
           {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
-            <div className="empty-tab">
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
               Статистика
             </div>
+
           )}
 
         </div>
 
-        {/* NAVIGATION */}
+        {/* BOTTOM NAVIGATION */}
         <div className="bottom-nav">
 
           {tabs.map((tab) => (
@@ -584,55 +591,6 @@ export default function Page() {
           ))}
 
         </div>
-
-        {/* MODAL */}
-        {isModalOpen && (
-
-          <div className="modal-overlay">
-
-            <div className="modal-window">
-
-              <h3 className="modal-title">
-                Редактирование
-              </h3>
-
-              <input
-                ref={inputRef}
-                type="text"
-                value={modalValue}
-                onChange={(e) =>
-                  setModalValue(
-                    e.target.value
-                  )
-                }
-                className="modal-input"
-              />
-
-              <div className="modal-buttons">
-
-                <button
-                  className="cancel-button"
-                  onClick={() =>
-                    setIsModalOpen(false)
-                  }
-                >
-                  Отмена
-                </button>
-
-                <button
-                  className="ok-button"
-                  onClick={saveModalValue}
-                >
-                  OK
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        )}
 
       </div>
 
