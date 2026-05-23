@@ -25,6 +25,7 @@ export default function Page() {
   const [actualAdvanceIncome, setActualAdvanceIncome] =
     useState(0);
 
+  // CALCULATIONS
   const projectIncome =
     (baseSalary / workingHoursPrevMonth) *
     projectHours *
@@ -73,6 +74,36 @@ export default function Page() {
     },
   ];
 
+  // FORMULA INPUT HANDLER
+  const handleFormulaInput = (
+    value: string,
+    setter: (value: number) => void
+  ) => {
+    // Разрешаем временно вводить формулу
+    if (
+      value.endsWith("*") ||
+      value.endsWith("/") ||
+      value.endsWith("+") ||
+      value.endsWith("-")
+    ) {
+      return;
+    }
+
+    try {
+      const result = Function(
+        `"use strict"; return (${value})`
+      )();
+
+      setter(Number(result));
+    } catch {
+      const parsed = Number(value);
+
+      if (!isNaN(parsed)) {
+        setter(parsed);
+      }
+    }
+  };
+
   return (
     <div className="app-container">
 
@@ -82,6 +113,7 @@ export default function Page() {
         <div className="header">
 
           <div>
+
             <p className="header-subtitle">
               Текущий период
             </p>
@@ -89,6 +121,7 @@ export default function Page() {
             <h1 className="header-title">
               Май 2026
             </h1>
+
           </div>
 
           <button className="month-button">
@@ -123,7 +156,8 @@ export default function Page() {
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent:
+                      "space-between",
                     alignItems: "flex-start",
                     marginBottom: "16px",
                   }}
@@ -133,9 +167,17 @@ export default function Page() {
                     КОМПО
                   </h3>
 
-                  <div style={{ textAlign: "right" }}>
+                  <div
+                    style={{
+                      textAlign: "right",
+                    }}
+                  >
 
-                    <div style={{ marginBottom: "12px" }}>
+                    <div
+                      style={{
+                        marginBottom: "12px",
+                      }}
+                    >
 
                       <p className="card-label">
                         Планируемый доход
@@ -195,25 +237,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setBaseSalary(
-                            Number(result)
-                          );
-                        } catch {
-                          setBaseSalary(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setBaseSalary
+                        )
+                      }
                       className="input"
                     />
 
@@ -232,25 +261,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setEmploymentRate(
-                            Number(result)
-                          );
-                        } catch {
-                          setEmploymentRate(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setEmploymentRate
+                        )
+                      }
                       className="input"
                     />
 
@@ -271,25 +287,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setWorkingHoursPrevMonth(
-                            Number(result)
-                          );
-                        } catch {
-                          setWorkingHoursPrevMonth(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setWorkingHoursPrevMonth
+                        )
+                      }
                       className="input"
                     />
 
@@ -308,25 +311,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setProjectHours(
-                            Number(result)
-                          );
-                        } catch {
-                          setProjectHours(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setProjectHours
+                        )
+                      }
                       className="input"
                     />
 
@@ -345,25 +335,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setRegularHours(
-                            Number(result)
-                          );
-                        } catch {
-                          setRegularHours(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setRegularHours
+                        )
+                      }
                       className="input"
                     />
 
@@ -389,29 +366,18 @@ export default function Page() {
 
                     <input
                       type="text"
-                      value={actualSalaryIncome}
+                      value={
+                        actualSalaryIncome
+                      }
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setActualSalaryIncome(
-                            Number(result)
-                          );
-                        } catch {
-                          setActualSalaryIncome(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setActualSalaryIncome
+                        )
+                      }
                       className="input"
                     />
 
@@ -431,25 +397,12 @@ export default function Page() {
                       onFocus={(e) =>
                         e.target.select()
                       }
-                      onChange={(e) => {
-                        const value =
-                          e.target.value;
-
-                        try {
-                          const result =
-                            Function(
-                              `"use strict"; return (${value})`
-                            )();
-
-                          setActualAdvanceIncome(
-                            Number(result)
-                          );
-                        } catch {
-                          setActualAdvanceIncome(
-                            Number(value) || 0
-                          );
-                        }
-                      }}
+                      onChange={(e) =>
+                        handleFormulaInput(
+                          e.target.value,
+                          setActualAdvanceIncome
+                        )
+                      }
                       className="input"
                     />
 
