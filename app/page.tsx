@@ -9,37 +9,118 @@ export default function Page() {
   const REGULAR_RATE = 0.5;
   const AFTER_TAX_RATE = 0.86;
 
-  const [activeTab, setActiveTab] = useState("income");
+  const [activeTab, setActiveTab] =
+    useState("income");
 
-  const [baseSalary, setBaseSalary] = useState(4500);
-  const [employmentRate, setEmploymentRate] = useState(1);
-  const [workingHoursPrevMonth, setWorkingHoursPrevMonth] =
-    useState(168);
+  // NUMBER VALUES
+  const [baseSalary, setBaseSalary] =
+    useState(4500);
 
-  const [projectHours, setProjectHours] = useState(32);
-  const [regularHours, setRegularHours] = useState(96);
+  const [
+    employmentRate,
+    setEmploymentRate,
+  ] = useState(1);
 
-  const [actualSalaryIncome, setActualSalaryIncome] =
-    useState(0);
+  const [
+    workingHoursPrevMonth,
+    setWorkingHoursPrevMonth,
+  ] = useState(168);
 
-  const [actualAdvanceIncome, setActualAdvanceIncome] =
-    useState(0);
+  const [projectHours, setProjectHours] =
+    useState(32);
+
+  const [regularHours, setRegularHours] =
+    useState(96);
+
+  const [
+    actualSalaryIncome,
+    setActualSalaryIncome,
+  ] = useState(0);
+
+  const [
+    actualAdvanceIncome,
+    setActualAdvanceIncome,
+  ] = useState(0);
+
+  // INPUT VALUES
+  const [
+    baseSalaryInput,
+    setBaseSalaryInput,
+  ] = useState("4500");
+
+  const [
+    employmentRateInput,
+    setEmploymentRateInput,
+  ] = useState("1");
+
+  const [
+    workingHoursPrevMonthInput,
+    setWorkingHoursPrevMonthInput,
+  ] = useState("168");
+
+  const [
+    projectHoursInput,
+    setProjectHoursInput,
+  ] = useState("32");
+
+  const [
+    regularHoursInput,
+    setRegularHoursInput,
+  ] = useState("96");
+
+  const [
+    actualSalaryIncomeInput,
+    setActualSalaryIncomeInput,
+  ] = useState("0");
+
+  const [
+    actualAdvanceIncomeInput,
+    setActualAdvanceIncomeInput,
+  ] = useState("0");
+
+  // INPUT HANDLER
+  const handleInput = (
+    value: string,
+    setInput: (value: string) => void,
+    setNumber: (value: number) => void
+  ) => {
+    const formatted =
+      value.replace(",", ".");
+
+    setInput(formatted);
+
+    try {
+      const result = Function(
+        `"use strict"; return (${formatted})`
+      )();
+
+      if (!isNaN(result)) {
+        setNumber(Number(result));
+      }
+    } catch {
+      // Не делаем ничего,
+      // пока формула не завершена
+    }
+  };
 
   // CALCULATIONS
   const projectIncome =
-    (baseSalary / workingHoursPrevMonth) *
+    (baseSalary /
+      workingHoursPrevMonth) *
     projectHours *
     PROJECT_RATE *
     PROJECT_COEFFICIENT *
     AFTER_TAX_RATE;
 
   const regularIncome =
-    (baseSalary / workingHoursPrevMonth) *
+    (baseSalary /
+      workingHoursPrevMonth) *
     regularHours *
     REGULAR_RATE *
     AFTER_TAX_RATE;
 
-  const advanceIncome = baseSalary / 2;
+  const advanceIncome =
+    baseSalary / 2;
 
   const salaryIncome =
     baseSalary *
@@ -53,7 +134,8 @@ export default function Page() {
     salaryIncome + advanceIncome;
 
   const totalActualIncome =
-    actualSalaryIncome + actualAdvanceIncome;
+    actualSalaryIncome +
+    actualAdvanceIncome;
 
   const tabs = [
     {
@@ -73,36 +155,6 @@ export default function Page() {
       label: "Статистика",
     },
   ];
-
-  // FORMULA INPUT HANDLER
-  const handleFormulaInput = (
-    value: string,
-    setter: (value: number) => void
-  ) => {
-    // Разрешаем временно вводить формулу
-    if (
-      value.endsWith("*") ||
-      value.endsWith("/") ||
-      value.endsWith("+") ||
-      value.endsWith("-")
-    ) {
-      return;
-    }
-
-    try {
-      const result = Function(
-        `"use strict"; return (${value})`
-      )();
-
-      setter(Number(result));
-    } catch {
-      const parsed = Number(value);
-
-      if (!isNaN(parsed)) {
-        setter(parsed);
-      }
-    }
-  };
 
   return (
     <div className="app-container">
@@ -158,7 +210,8 @@ export default function Page() {
                     display: "flex",
                     justifyContent:
                       "space-between",
-                    alignItems: "flex-start",
+                    alignItems:
+                      "flex-start",
                     marginBottom: "16px",
                   }}
                 >
@@ -189,7 +242,9 @@ export default function Page() {
                           fontWeight: 700,
                         }}
                       >
-                        {totalKompoIncome.toFixed(0)}
+                        {totalKompoIncome.toFixed(
+                          0
+                        )}
                       </p>
 
                     </div>
@@ -206,7 +261,9 @@ export default function Page() {
                           fontWeight: 700,
                         }}
                       >
-                        {totalActualIncome.toFixed(0)}
+                        {totalActualIncome.toFixed(
+                          0
+                        )}
                       </p>
 
                     </div>
@@ -219,7 +276,8 @@ export default function Page() {
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection:
+                      "column",
                     gap: "12px",
                   }}
                 >
@@ -233,13 +291,16 @@ export default function Page() {
 
                     <input
                       type="text"
-                      value={baseSalary}
+                      value={
+                        baseSalaryInput
+                      }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setBaseSalaryInput,
                           setBaseSalary
                         )
                       }
@@ -257,13 +318,16 @@ export default function Page() {
 
                     <input
                       type="text"
-                      value={employmentRate}
+                      value={
+                        employmentRateInput
+                      }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setEmploymentRateInput,
                           setEmploymentRate
                         )
                       }
@@ -272,7 +336,7 @@ export default function Page() {
 
                   </div>
 
-                  {/* РАБОЧИЕ ЧАСЫ */}
+                  {/* ЧАСЫ */}
                   <div>
 
                     <p className="card-label">
@@ -282,14 +346,15 @@ export default function Page() {
                     <input
                       type="text"
                       value={
-                        workingHoursPrevMonth
+                        workingHoursPrevMonthInput
                       }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setWorkingHoursPrevMonthInput,
                           setWorkingHoursPrevMonth
                         )
                       }
@@ -307,13 +372,16 @@ export default function Page() {
 
                     <input
                       type="text"
-                      value={projectHours}
+                      value={
+                        projectHoursInput
+                      }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setProjectHoursInput,
                           setProjectHours
                         )
                       }
@@ -331,13 +399,16 @@ export default function Page() {
 
                     <input
                       type="text"
-                      value={regularHours}
+                      value={
+                        regularHoursInput
+                      }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setRegularHoursInput,
                           setRegularHours
                         )
                       }
@@ -353,7 +424,8 @@ export default function Page() {
                   style={{
                     marginTop: "20px",
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection:
+                      "column",
                     gap: "12px",
                   }}
                 >
@@ -367,14 +439,15 @@ export default function Page() {
                     <input
                       type="text"
                       value={
-                        actualSalaryIncome
+                        actualSalaryIncomeInput
                       }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setActualSalaryIncomeInput,
                           setActualSalaryIncome
                         )
                       }
@@ -392,14 +465,15 @@ export default function Page() {
                     <input
                       type="text"
                       value={
-                        actualAdvanceIncome
+                        actualAdvanceIncomeInput
                       }
                       onFocus={(e) =>
                         e.target.select()
                       }
                       onChange={(e) =>
-                        handleFormulaInput(
+                        handleInput(
                           e.target.value,
+                          setActualAdvanceIncomeInput,
                           setActualAdvanceIncome
                         )
                       }
@@ -420,7 +494,9 @@ export default function Page() {
                     </span>
 
                     <span className="result-value">
-                      {projectIncome.toFixed(0)}
+                      {projectIncome.toFixed(
+                        0
+                      )}
                     </span>
 
                   </div>
@@ -432,7 +508,9 @@ export default function Page() {
                     </span>
 
                     <span className="result-value">
-                      {regularIncome.toFixed(0)}
+                      {regularIncome.toFixed(
+                        0
+                      )}
                     </span>
 
                   </div>
@@ -444,7 +522,9 @@ export default function Page() {
                     </span>
 
                     <span className="result-value">
-                      {salaryIncome.toFixed(0)}
+                      {salaryIncome.toFixed(
+                        0
+                      )}
                     </span>
 
                   </div>
@@ -456,7 +536,9 @@ export default function Page() {
                     </span>
 
                     <span className="result-value">
-                      {advanceIncome.toFixed(0)}
+                      {advanceIncome.toFixed(
+                        0
+                      )}
                     </span>
 
                   </div>
@@ -476,7 +558,8 @@ export default function Page() {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "center",
+                justifyContent:
+                  "center",
                 alignItems: "center",
                 color: "#6b7280",
               }}
@@ -493,7 +576,8 @@ export default function Page() {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "center",
+                justifyContent:
+                  "center",
                 alignItems: "center",
                 color: "#6b7280",
               }}
@@ -510,7 +594,8 @@ export default function Page() {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "center",
+                justifyContent:
+                  "center",
                 alignItems: "center",
                 color: "#6b7280",
               }}
