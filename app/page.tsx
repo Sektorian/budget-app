@@ -202,11 +202,23 @@ export default function Page() {
                   {/* ОКЛАД */}
                   <div>
 
-                    <div className="input-header">
+                    <p className="card-label">
+                      Оклад
+                    </p>
 
-                      <p className="card-label">
-                        Оклад
-                      </p>
+                    <div className="input-row">
+
+                      <input
+                        type="number"
+                        value={baseSalary}
+                        disabled={!editBaseSalary}
+                        onChange={(e) =>
+                          setBaseSalary(
+                            Number(e.target.value)
+                          )
+                        }
+                        className="input"
+                      />
 
                       <button
                         className="edit-button"
@@ -216,33 +228,34 @@ export default function Page() {
                           )
                         }
                       >
-                        ✏️
+                        ✎
                       </button>
 
                     </div>
-
-                    <input
-                      type="number"
-                      value={baseSalary}
-                      disabled={!editBaseSalary}
-                      onChange={(e) =>
-                        setBaseSalary(
-                          Number(e.target.value)
-                        )
-                      }
-                      className="input"
-                    />
 
                   </div>
 
                   {/* СТАВКА */}
                   <div>
 
-                    <div className="input-header">
+                    <p className="card-label">
+                      Ставка
+                    </p>
 
-                      <p className="card-label">
-                        Ставка
-                      </p>
+                    <div className="input-row">
+
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={employmentRate}
+                        disabled={!editEmploymentRate}
+                        onChange={(e) =>
+                          setEmploymentRate(
+                            Number(e.target.value)
+                          )
+                        }
+                        className="input"
+                      />
 
                       <button
                         className="edit-button"
@@ -252,34 +265,33 @@ export default function Page() {
                           )
                         }
                       >
-                        ✏️
+                        ✎
                       </button>
 
                     </div>
-
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={employmentRate}
-                      disabled={!editEmploymentRate}
-                      onChange={(e) =>
-                        setEmploymentRate(
-                          Number(e.target.value)
-                        )
-                      }
-                      className="input"
-                    />
 
                   </div>
 
                   {/* ЧАСЫ */}
                   <div>
 
-                    <div className="input-header">
+                    <p className="card-label">
+                      Рабочих часов в прошлом месяце
+                    </p>
 
-                      <p className="card-label">
-                        Рабочих часов в прошлом месяце
-                      </p>
+                    <div className="input-row">
+
+                      <input
+                        type="number"
+                        value={workingHoursPrevMonth}
+                        disabled={!editWorkingHours}
+                        onChange={(e) =>
+                          setWorkingHoursPrevMonth(
+                            Number(e.target.value)
+                          )
+                        }
+                        className="input"
+                      />
 
                       <button
                         className="edit-button"
@@ -289,33 +301,33 @@ export default function Page() {
                           )
                         }
                       >
-                        ✏️
+                        ✎
                       </button>
 
                     </div>
-
-                    <input
-                      type="number"
-                      value={workingHoursPrevMonth}
-                      disabled={!editWorkingHours}
-                      onChange={(e) =>
-                        setWorkingHoursPrevMonth(
-                          Number(e.target.value)
-                        )
-                      }
-                      className="input"
-                    />
 
                   </div>
 
                   {/* ПРОЕКТНЫЕ */}
                   <div>
 
-                    <div className="input-header">
+                    <p className="card-label">
+                      ПРОЕКТНЫЕ (часы)
+                    </p>
 
-                      <p className="card-label">
-                        ПРОЕКТНЫЕ (часы)
-                      </p>
+                    <div className="input-row">
+
+                      <input
+                        type="number"
+                        value={projectHours}
+                        disabled={!editProjectHours}
+                        onChange={(e) =>
+                          setProjectHours(
+                            Number(e.target.value)
+                          )
+                        }
+                        className="input"
+                      />
 
                       <button
                         className="edit-button"
@@ -325,33 +337,33 @@ export default function Page() {
                           )
                         }
                       >
-                        ✏️
+                        ✎
                       </button>
 
                     </div>
-
-                    <input
-                      type="number"
-                      value={projectHours}
-                      disabled={!editProjectHours}
-                      onChange={(e) =>
-                        setProjectHours(
-                          Number(e.target.value)
-                        )
-                      }
-                      className="input"
-                    />
 
                   </div>
 
                   {/* РЕГУЛЯРНЫЕ */}
                   <div>
 
-                    <div className="input-header">
+                    <p className="card-label">
+                      РЕГУЛЯРНЫЕ (часы)
+                    </p>
 
-                      <p className="card-label">
-                        РЕГУЛЯРНЫЕ (часы)
-                      </p>
+                    <div className="input-row">
+
+                      <input
+                        type="number"
+                        value={regularHours}
+                        disabled={!editRegularHours}
+                        onChange={(e) =>
+                          setRegularHours(
+                            Number(e.target.value)
+                          )
+                        }
+                        className="input"
+                      />
 
                       <button
                         className="edit-button"
@@ -361,22 +373,10 @@ export default function Page() {
                           )
                         }
                       >
-                        ✏️
+                        ✎
                       </button>
 
                     </div>
-
-                    <input
-                      type="number"
-                      value={regularHours}
-                      disabled={!editRegularHours}
-                      onChange={(e) =>
-                        setRegularHours(
-                          Number(e.target.value)
-                        )
-                      }
-                      className="input"
-                    />
 
                   </div>
 
