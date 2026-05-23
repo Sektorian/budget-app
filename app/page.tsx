@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import "./styles.css";
 
 export default function Page() {
   const PROJECT_RATE = 0.75;
@@ -12,13 +13,17 @@ export default function Page() {
 
   const [baseSalary, setBaseSalary] = useState(4500);
   const [employmentRate, setEmploymentRate] = useState(1);
-  const [workingHoursPrevMonth, setWorkingHoursPrevMonth] = useState(168);
+  const [workingHoursPrevMonth, setWorkingHoursPrevMonth] =
+    useState(168);
 
   const [projectHours, setProjectHours] = useState(32);
   const [regularHours, setRegularHours] = useState(96);
 
-  const [actualSalaryIncome, setActualSalaryIncome] = useState(0);
-  const [actualAdvanceIncome, setActualAdvanceIncome] = useState(0);
+  const [actualSalaryIncome, setActualSalaryIncome] =
+    useState(0);
+
+  const [actualAdvanceIncome, setActualAdvanceIncome] =
+    useState(0);
 
   const projectIncome =
     (baseSalary / workingHoursPrevMonth) *
@@ -50,79 +55,118 @@ export default function Page() {
     actualSalaryIncome + actualAdvanceIncome;
 
   const tabs = [
-    { id: "income", label: "Доходы" },
-    { id: "planning", label: "Планирование" },
-    { id: "expenses", label: "Расходы" },
-    { id: "stats", label: "Статистика" },
+    {
+      id: "income",
+      label: "Доходы",
+    },
+    {
+      id: "planning",
+      label: "Планирование",
+    },
+    {
+      id: "expenses",
+      label: "Расходы",
+    },
+    {
+      id: "stats",
+      label: "Статистика",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="w-full max-w-sm h-screen bg-white flex flex-col overflow-hidden">
+    <div className="app-container">
 
-        {/* Header */}
-        <div className="p-5 border-b flex items-center justify-between bg-white">
+      <div className="phone-frame">
+
+        {/* HEADER */}
+        <div className="header">
+
           <div>
-            <p className="text-sm text-gray-500">
+            <p className="header-subtitle">
               Текущий период
             </p>
 
-            <h1 className="text-2xl font-bold">
+            <h1 className="header-title">
               Май 2026
             </h1>
           </div>
 
-          <button className="w-10 h-10 rounded-xl bg-gray-100 text-sm font-medium">
+          <button className="month-button">
             М
           </button>
+
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-auto p-4 bg-gray-50">
+        {/* CONTENT */}
+        <div className="content">
 
           {/* ДОХОДЫ */}
           {activeTab === "income" && (
+
             <div>
 
               <div className="mb-4">
-                <h2 className="text-xl font-semibold">
+
+                <h2 className="section-title">
                   Доходы
                 </h2>
 
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="section-subtitle">
                   Планируемые и фактические поступления
                 </p>
+
               </div>
 
               {/* КОМПО */}
-              <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 mb-4">
+              <div className="card">
 
-                <div className="flex items-center justify-between mb-4">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "16px",
+                  }}
+                >
 
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="card-title">
                     КОМПО
                   </h3>
 
-                  <div className="text-right">
+                  <div style={{ textAlign: "right" }}>
 
-                    <div className="mb-2">
-                      <p className="text-xs text-gray-500">
+                    <div style={{ marginBottom: "12px" }}>
+
+                      <p className="card-label">
                         Планируемый доход
                       </p>
 
-                      <p className="text-lg font-bold">
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
                         {totalKompoIncome.toFixed(0)}
                       </p>
+
                     </div>
 
                     <div>
-                      <p className="text-xs text-gray-500">
+
+                      <p className="card-label">
                         Фактический доход
                       </p>
 
-                      <p className="text-lg font-bold">
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
                         {totalActualIncome.toFixed(0)}
                       </p>
+
                     </div>
 
                   </div>
@@ -130,10 +174,17 @@ export default function Page() {
                 </div>
 
                 {/* INPUTS */}
-                <div className="space-y-3">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       Оклад
                     </p>
 
@@ -141,14 +192,18 @@ export default function Page() {
                       type="number"
                       value={baseSalary}
                       onChange={(e) =>
-                        setBaseSalary(Number(e.target.value))
+                        setBaseSalary(
+                          Number(e.target.value)
+                        )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       Ставка
                     </p>
 
@@ -157,14 +212,18 @@ export default function Page() {
                       step="0.1"
                       value={employmentRate}
                       onChange={(e) =>
-                        setEmploymentRate(Number(e.target.value))
+                        setEmploymentRate(
+                          Number(e.target.value)
+                        )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       Рабочих часов в прошлом месяце
                     </p>
 
@@ -176,12 +235,14 @@ export default function Page() {
                           Number(e.target.value)
                         )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       ПРОЕКТНЫЕ (часы)
                     </p>
 
@@ -189,14 +250,18 @@ export default function Page() {
                       type="number"
                       value={projectHours}
                       onChange={(e) =>
-                        setProjectHours(Number(e.target.value))
+                        setProjectHours(
+                          Number(e.target.value)
+                        )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       РЕГУЛЯРНЫЕ (часы)
                     </p>
 
@@ -204,19 +269,30 @@ export default function Page() {
                       type="number"
                       value={regularHours}
                       onChange={(e) =>
-                        setRegularHours(Number(e.target.value))
+                        setRegularHours(
+                          Number(e.target.value)
+                        )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                 </div>
 
                 {/* FACT */}
-                <div className="mt-5 space-y-3">
+                <div
+                  style={{
+                    marginTop: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       Фактическая зарплата
                     </p>
 
@@ -228,12 +304,14 @@ export default function Page() {
                           Number(e.target.value)
                         )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">
+
+                    <p className="card-label">
                       Фактический аванс
                     </p>
 
@@ -245,53 +323,62 @@ export default function Page() {
                           Number(e.target.value)
                         )
                       }
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2"
+                      className="input"
                     />
+
                   </div>
 
                 </div>
 
                 {/* RESULTS */}
-                <div className="mt-5 pt-4 border-t border-gray-100 space-y-2 text-sm">
+                <div className="results">
 
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">
+                  <div className="result-row">
+
+                    <span className="result-label">
                       Проектные
                     </span>
 
-                    <span className="font-medium">
+                    <span className="result-value">
                       {projectIncome.toFixed(0)}
                     </span>
+
                   </div>
 
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">
+                  <div className="result-row">
+
+                    <span className="result-label">
                       Регулярные
                     </span>
 
-                    <span className="font-medium">
+                    <span className="result-value">
                       {regularIncome.toFixed(0)}
                     </span>
+
                   </div>
 
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">
+                  <div className="result-row">
+
+                    <span className="result-label">
                       Зарплата
                     </span>
 
-                    <span className="font-medium">
+                    <span className="result-value">
                       {salaryIncome.toFixed(0)}
                     </span>
+
                   </div>
 
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">
+                  <div className="result-row">
+
+                    <span className="result-label">
                       Аванс
                     </span>
 
-                    <span className="font-medium">
+                    <span className="result-value">
                       {advanceIncome.toFixed(0)}
                     </span>
+
                   </div>
 
                 </div>
@@ -299,50 +386,87 @@ export default function Page() {
               </div>
 
             </div>
+
           )}
 
           {/* ПЛАНИРОВАНИЕ */}
           {activeTab === "planning" && (
-            <div className="h-full flex items-center justify-center text-gray-500">
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
               Планирование
             </div>
+
           )}
 
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
-            <div className="h-full flex items-center justify-center text-gray-500">
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
               Расходы
             </div>
+
           )}
 
           {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
-            <div className="h-full flex items-center justify-center text-gray-500">
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#6b7280",
+              }}
+            >
               Статистика
             </div>
+
           )}
 
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="border-t p-2 grid grid-cols-4 gap-2 bg-white">
+        {/* BOTTOM NAVIGATION */}
+        <div className="bottom-nav">
 
           {tabs.map((tab) => (
+
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`p-2 rounded-xl text-sm transition ${
+              onClick={() =>
+                setActiveTab(tab.id)
+              }
+              className={
                 activeTab === tab.id
-                  ? "bg-black text-white"
-                  : "text-gray-500"
-              }`}
+                  ? "nav-button active"
+                  : "nav-button"
+              }
             >
               {tab.label}
             </button>
+
           ))}
 
         </div>
+
       </div>
+
     </div>
   );
 }
