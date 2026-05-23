@@ -14,7 +14,7 @@ export default function Page() {
 
   // NUMBER VALUES
   const [baseSalary, setBaseSalary] =
-    useState(4500);
+    useState(2900);
 
   const [
     employmentRate,
@@ -27,10 +27,10 @@ export default function Page() {
   ] = useState(168);
 
   const [projectHours, setProjectHours] =
-    useState(32);
+    useState(0);
 
   const [regularHours, setRegularHours] =
-    useState(96);
+    useState(0);
 
   const [
     actualSalaryIncome,
