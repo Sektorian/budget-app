@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./styles.css";
 
 export default function Page() {
@@ -25,21 +25,26 @@ export default function Page() {
   const [actualAdvanceIncome, setActualAdvanceIncome] =
     useState(0);
 
-  // EDIT MODE
-  const [editBaseSalary, setEditBaseSalary] =
+  // MODAL
+  const [isModalOpen, setIsModalOpen] =
     useState(false);
 
-  const [editEmploymentRate, setEditEmploymentRate] =
-    useState(false);
+  const [modalValue, setModalValue] =
+    useState("");
 
-  const [editWorkingHours, setEditWorkingHours] =
-    useState(false);
+  const [modalField, setModalField] =
+    useState("");
 
-  const [editProjectHours, setEditProjectHours] =
-    useState(false);
+  const inputRef =
+    useRef<HTMLInputElement>(null);
 
-  const [editRegularHours, setEditRegularHours] =
-    useState(false);
+  // AUTO SELECT
+  useEffect(() => {
+    if (isModalOpen && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isModalOpen]);
 
   // CALCULATIONS
   const projectIncome =
@@ -90,6 +95,57 @@ export default function Page() {
     },
   ];
 
+  // OPEN MODAL
+  const openEditModal = (
+    field: string,
+    value: number
+  ) => {
+    setModalField(field);
+    setModalValue(String(value));
+    setIsModalOpen(true);
+  };
+
+  // SAVE VALUE
+  const saveModalValue = () => {
+    let result = 0;
+
+    try {
+      result = Function(
+        `"use strict"; return (${modalValue})`
+      )();
+    } catch {
+      result = Number(modalValue);
+    }
+
+    if (isNaN(result)) {
+      result = 0;
+    }
+
+    switch (modalField) {
+      case "baseSalary":
+        setBaseSalary(result);
+        break;
+
+      case "employmentRate":
+        setEmploymentRate(result);
+        break;
+
+      case "workingHoursPrevMonth":
+        setWorkingHoursPrevMonth(result);
+        break;
+
+      case "projectHours":
+        setProjectHours(result);
+        break;
+
+      case "regularHours":
+        setRegularHours(result);
+        break;
+    }
+
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="app-container">
 
@@ -134,13 +190,14 @@ export default function Page() {
 
               </div>
 
-              {/* КОМПО */}
+              {/* CARD */}
               <div className="card">
 
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent:
+                      "space-between",
                     alignItems: "flex-start",
                     marginBottom: "16px",
                   }}
@@ -150,9 +207,17 @@ export default function Page() {
                     КОМПО
                   </h3>
 
-                  <div style={{ textAlign: "right" }}>
+                  <div
+                    style={{
+                      textAlign: "right",
+                    }}
+                  >
 
-                    <div style={{ marginBottom: "12px" }}>
+                    <div
+                      style={{
+                        marginBottom: "12px",
+                      }}
+                    >
 
                       <p className="card-label">
                         Планируемый доход
@@ -191,13 +256,7 @@ export default function Page() {
                 </div>
 
                 {/* INPUTS */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
-                >
+                <div className="inputs-column">
 
                   {/* ОКЛАД */}
                   <div>
@@ -209,22 +268,18 @@ export default function Page() {
                     <div className="input-row">
 
                       <input
-                        type="number"
+                        type="text"
                         value={baseSalary}
-                        disabled={!editBaseSalary}
-                        onChange={(e) =>
-                          setBaseSalary(
-                            Number(e.target.value)
-                          )
-                        }
+                        readOnly
                         className="input"
                       />
 
                       <button
                         className="edit-button"
                         onClick={() =>
-                          setEditBaseSalary(
-                            !editBaseSalary
+                          openEditModal(
+                            "baseSalary",
+                            baseSalary
                           )
                         }
                       >
@@ -245,23 +300,18 @@ export default function Page() {
                     <div className="input-row">
 
                       <input
-                        type="number"
-                        step="0.1"
+                        type="text"
                         value={employmentRate}
-                        disabled={!editEmploymentRate}
-                        onChange={(e) =>
-                          setEmploymentRate(
-                            Number(e.target.value)
-                          )
-                        }
+                        readOnly
                         className="input"
                       />
 
                       <button
                         className="edit-button"
                         onClick={() =>
-                          setEditEmploymentRate(
-                            !editEmploymentRate
+                          openEditModal(
+                            "employmentRate",
+                            employmentRate
                           )
                         }
                       >
@@ -276,28 +326,26 @@ export default function Page() {
                   <div>
 
                     <p className="card-label">
-                      Рабочих часов в прошлом месяце
+                      Рабочих часов
                     </p>
 
                     <div className="input-row">
 
                       <input
-                        type="number"
-                        value={workingHoursPrevMonth}
-                        disabled={!editWorkingHours}
-                        onChange={(e) =>
-                          setWorkingHoursPrevMonth(
-                            Number(e.target.value)
-                          )
+                        type="text"
+                        value={
+                          workingHoursPrevMonth
                         }
+                        readOnly
                         className="input"
                       />
 
                       <button
                         className="edit-button"
                         onClick={() =>
-                          setEditWorkingHours(
-                            !editWorkingHours
+                          openEditModal(
+                            "workingHoursPrevMonth",
+                            workingHoursPrevMonth
                           )
                         }
                       >
@@ -312,28 +360,24 @@ export default function Page() {
                   <div>
 
                     <p className="card-label">
-                      ПРОЕКТНЫЕ (часы)
+                      ПРОЕКТНЫЕ
                     </p>
 
                     <div className="input-row">
 
                       <input
-                        type="number"
+                        type="text"
                         value={projectHours}
-                        disabled={!editProjectHours}
-                        onChange={(e) =>
-                          setProjectHours(
-                            Number(e.target.value)
-                          )
-                        }
+                        readOnly
                         className="input"
                       />
 
                       <button
                         className="edit-button"
                         onClick={() =>
-                          setEditProjectHours(
-                            !editProjectHours
+                          openEditModal(
+                            "projectHours",
+                            projectHours
                           )
                         }
                       >
@@ -348,28 +392,24 @@ export default function Page() {
                   <div>
 
                     <p className="card-label">
-                      РЕГУЛЯРНЫЕ (часы)
+                      РЕГУЛЯРНЫЕ
                     </p>
 
                     <div className="input-row">
 
                       <input
-                        type="number"
+                        type="text"
                         value={regularHours}
-                        disabled={!editRegularHours}
-                        onChange={(e) =>
-                          setRegularHours(
-                            Number(e.target.value)
-                          )
-                        }
+                        readOnly
                         className="input"
                       />
 
                       <button
                         className="edit-button"
                         onClick={() =>
-                          setEditRegularHours(
-                            !editRegularHours
+                          openEditModal(
+                            "regularHours",
+                            regularHours
                           )
                         }
                       >
@@ -400,10 +440,14 @@ export default function Page() {
 
                     <input
                       type="number"
-                      value={actualSalaryIncome}
+                      value={
+                        actualSalaryIncome
+                      }
                       onChange={(e) =>
                         setActualSalaryIncome(
-                          Number(e.target.value)
+                          Number(
+                            e.target.value
+                          )
                         )
                       }
                       className="input"
@@ -419,10 +463,14 @@ export default function Page() {
 
                     <input
                       type="number"
-                      value={actualAdvanceIncome}
+                      value={
+                        actualAdvanceIncome
+                      }
                       onChange={(e) =>
                         setActualAdvanceIncome(
-                          Number(e.target.value)
+                          Number(
+                            e.target.value
+                          )
                         )
                       }
                       className="input"
@@ -493,34 +541,28 @@ export default function Page() {
 
           {/* ПЛАН */}
           {activeTab === "planning" && (
-
             <div className="empty-tab">
               План
             </div>
-
           )}
 
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
-
             <div className="empty-tab">
               Расходы
             </div>
-
           )}
 
           {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
-
             <div className="empty-tab">
               Статистика
             </div>
-
           )}
 
         </div>
 
-        {/* BOTTOM NAVIGATION */}
+        {/* NAVIGATION */}
         <div className="bottom-nav">
 
           {tabs.map((tab) => (
@@ -542,6 +584,55 @@ export default function Page() {
           ))}
 
         </div>
+
+        {/* MODAL */}
+        {isModalOpen && (
+
+          <div className="modal-overlay">
+
+            <div className="modal-window">
+
+              <h3 className="modal-title">
+                Редактирование
+              </h3>
+
+              <input
+                ref={inputRef}
+                type="text"
+                value={modalValue}
+                onChange={(e) =>
+                  setModalValue(
+                    e.target.value
+                  )
+                }
+                className="modal-input"
+              />
+
+              <div className="modal-buttons">
+
+                <button
+                  className="cancel-button"
+                  onClick={() =>
+                    setIsModalOpen(false)
+                  }
+                >
+                  Отмена
+                </button>
+
+                <button
+                  className="ok-button"
+                  onClick={saveModalValue}
+                >
+                  OK
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
 
       </div>
 
