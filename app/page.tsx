@@ -12,6 +12,22 @@ export default function Page() {
   const [activeTab, setActiveTab] =
     useState("income");
 
+  // COLLAPSE
+  const [
+    isKompoCollapsed,
+    setIsKompoCollapsed,
+  ] = useState(false);
+
+  const [
+    isAltagammaCollapsed,
+    setIsAltagammaCollapsed,
+  ] = useState(false);
+
+  const [
+    isBonusCollapsed,
+    setIsBonusCollapsed,
+  ] = useState(false);
+
   // NUMBER VALUES
   const [baseSalary, setBaseSalary] =
     useState(2900);
@@ -42,15 +58,23 @@ export default function Page() {
     setActualAdvanceIncome,
   ] = useState(0);
 
+  // ALTAGAMMA
   const [
     altagammaPlanned,
     setAltagammaPlanned,
   ] = useState(0);
-  
+
   const [
     altagammaActual,
     setAltagammaActual,
   ] = useState(0);
+
+  // BONUS
+  const [bonusPlanned, setBonusPlanned] =
+    useState(0);
+
+  const [bonusActual, setBonusActual] =
+    useState(0);
 
   // INPUT VALUES
   const [
@@ -88,14 +112,26 @@ export default function Page() {
     setActualAdvanceIncomeInput,
   ] = useState("0");
 
+  // ALTAGAMMA INPUTS
   const [
     altagammaPlannedInput,
     setAltagammaPlannedInput,
   ] = useState("0");
-  
+
   const [
     altagammaActualInput,
     setAltagammaActualInput,
+  ] = useState("0");
+
+  // BONUS INPUTS
+  const [
+    bonusPlannedInput,
+    setBonusPlannedInput,
+  ] = useState("0");
+
+  const [
+    bonusActualInput,
+    setBonusActualInput,
   ] = useState("0");
 
   // INPUT HANDLER
@@ -118,8 +154,7 @@ export default function Page() {
         setNumber(Number(result));
       }
     } catch {
-      // Не делаем ничего,
-      // пока формула не завершена
+      // Формула ещё не завершена
     }
   };
 
@@ -156,6 +191,17 @@ export default function Page() {
   const totalActualIncome =
     actualSalaryIncome +
     actualAdvanceIncome;
+
+  // TOTALS
+  const totalPlannedIncome =
+    totalKompoIncome +
+    altagammaPlanned +
+    bonusPlanned;
+
+  const totalFactIncome =
+    totalActualIncome +
+    altagammaActual +
+    bonusActual;
 
   const tabs = [
     {
@@ -210,15 +256,78 @@ export default function Page() {
 
             <div>
 
-              <div className="mb-4">
+              {/* HEADER */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent:
+                    "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "16px",
+                }}
+              >
 
-                <h2 className="section-title">
-                  Доходы
-                </h2>
+                <div>
 
-                <p className="section-subtitle">
-                  Планируемые и фактические поступления
-                </p>
+                  <h2 className="section-title">
+                    Доходы
+                  </h2>
+
+                  <p className="section-subtitle">
+                    Планируемые и фактические поступления
+                  </p>
+
+                </div>
+
+                <div
+                  style={{
+                    textAlign: "right",
+                  }}
+                >
+
+                  <div
+                    style={{
+                      marginBottom: "10px",
+                    }}
+                  >
+
+                    <p className="card-label">
+                      Планируемый
+                    </p>
+
+                    <p
+                      style={{
+                        fontSize: "22px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {totalPlannedIncome.toFixed(
+                        0
+                      )}
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="card-label">
+                      Фактический
+                    </p>
+
+                    <p
+                      style={{
+                        fontSize: "22px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {totalFactIncome.toFixed(
+                        0
+                      )}
+                    </p>
+
+                  </div>
+
+                </div>
 
               </div>
 
@@ -236,9 +345,39 @@ export default function Page() {
                   }}
                 >
 
-                  <h3 className="card-title">
-                    КОМПО
-                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+
+                    <h3 className="card-title">
+                      КОМПО
+                    </h3>
+
+                    <button
+                      onClick={() =>
+                        setIsKompoCollapsed(
+                          !isKompoCollapsed
+                        )
+                      }
+                      style={{
+                        border: "none",
+                        background:
+                          "transparent",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {isKompoCollapsed
+                        ? "▼"
+                        : "▲"}
+                    </button>
+
+                  </div>
 
                   <div
                     style={{
@@ -292,294 +431,306 @@ export default function Page() {
 
                 </div>
 
-                {/* INPUTS */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection:
-                      "column",
-                    gap: "12px",
-                  }}
-                >
+                {!isKompoCollapsed && (
 
-                  {/* ОКЛАД */}
-                  <div>
+                  <>
 
-                    <p className="card-label">
-                      Оклад
-                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection:
+                          "column",
+                        gap: "12px",
+                      }}
+                    >
 
-                    <input
-                      type="text"
-                      value={
-                        baseSalaryInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setBaseSalaryInput,
-                          setBaseSalary
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          Оклад
+                        </p>
 
-                  {/* СТАВКА */}
-                  <div>
+                        <input
+                          type="text"
+                          value={
+                            baseSalaryInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setBaseSalaryInput,
+                              setBaseSalary
+                            )
+                          }
+                          className="input"
+                        />
 
-                    <p className="card-label">
-                      Ставка
-                    </p>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={
-                        employmentRateInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setEmploymentRateInput,
-                          setEmploymentRate
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          Ставка
+                        </p>
 
-                  {/* ЧАСЫ */}
-                  <div>
+                        <input
+                          type="text"
+                          value={
+                            employmentRateInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setEmploymentRateInput,
+                              setEmploymentRate
+                            )
+                          }
+                          className="input"
+                        />
 
-                    <p className="card-label">
-                      Рабочих часов в прошлом месяце
-                    </p>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={
-                        workingHoursPrevMonthInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setWorkingHoursPrevMonthInput,
-                          setWorkingHoursPrevMonth
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          Рабочих часов в прошлом месяце
+                        </p>
 
-                  {/* ПРОЕКТНЫЕ */}
-                  <div>
+                        <input
+                          type="text"
+                          value={
+                            workingHoursPrevMonthInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setWorkingHoursPrevMonthInput,
+                              setWorkingHoursPrevMonth
+                            )
+                          }
+                          className="input"
+                        />
 
-                    <p className="card-label">
-                      ПРОЕКТНЫЕ (часы)
-                    </p>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={
-                        projectHoursInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setProjectHoursInput,
-                          setProjectHours
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          ПРОЕКТНЫЕ (часы)
+                        </p>
 
-                  {/* РЕГУЛЯРНЫЕ */}
-                  <div>
+                        <input
+                          type="text"
+                          value={
+                            projectHoursInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setProjectHoursInput,
+                              setProjectHours
+                            )
+                          }
+                          className="input"
+                        />
 
-                    <p className="card-label">
-                      РЕГУЛЯРНЫЕ (часы)
-                    </p>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={
-                        regularHoursInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setRegularHoursInput,
-                          setRegularHours
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          РЕГУЛЯРНЫЕ (часы)
+                        </p>
 
-                </div>
+                        <input
+                          type="text"
+                          value={
+                            regularHoursInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setRegularHoursInput,
+                              setRegularHours
+                            )
+                          }
+                          className="input"
+                        />
 
-                {/* FACT */}
-                <div
-                  style={{
-                    marginTop: "20px",
-                    display: "flex",
-                    flexDirection:
-                      "column",
-                    gap: "12px",
-                  }}
-                >
+                      </div>
 
-                  <div>
+                    </div>
 
-                    <p className="card-label">
-                      Фактическая зарплата
-                    </p>
+                    <div
+                      style={{
+                        marginTop: "20px",
+                        display: "flex",
+                        flexDirection:
+                          "column",
+                        gap: "12px",
+                      }}
+                    >
 
-                    <input
-                      type="text"
-                      value={
-                        actualSalaryIncomeInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setActualSalaryIncomeInput,
-                          setActualSalaryIncome
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          Фактическая зарплата
+                        </p>
 
-                  <div>
+                        <input
+                          type="text"
+                          value={
+                            actualSalaryIncomeInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setActualSalaryIncomeInput,
+                              setActualSalaryIncome
+                            )
+                          }
+                          className="input"
+                        />
 
-                    <p className="card-label">
-                      Фактический аванс
-                    </p>
+                      </div>
 
-                    <input
-                      type="text"
-                      value={
-                        actualAdvanceIncomeInput
-                      }
-                      onFocus={(e) =>
-                        e.target.select()
-                      }
-                      onChange={(e) =>
-                        handleInput(
-                          e.target.value,
-                          setActualAdvanceIncomeInput,
-                          setActualAdvanceIncome
-                        )
-                      }
-                      className="input"
-                    />
+                      <div>
 
-                  </div>
+                        <p className="card-label">
+                          Фактический аванс
+                        </p>
 
-                </div>
+                        <input
+                          type="text"
+                          value={
+                            actualAdvanceIncomeInput
+                          }
+                          onFocus={(e) =>
+                            e.target.select()
+                          }
+                          onChange={(e) =>
+                            handleInput(
+                              e.target.value,
+                              setActualAdvanceIncomeInput,
+                              setActualAdvanceIncome
+                            )
+                          }
+                          className="input"
+                        />
 
-                {/* RESULTS */}
-                <div className="results">
+                      </div>
 
-                  <div className="result-row">
+                    </div>
 
-                    <span className="result-label">
-                      Проектные
-                    </span>
+                    <div className="results">
 
-                    <span className="result-value">
-                      {projectIncome.toFixed(
-                        0
-                      )}
-                    </span>
+                      <div className="result-row">
 
-                  </div>
+                        <span className="result-label">
+                          Проектные
+                        </span>
 
-                  <div className="result-row">
+                        <span className="result-value">
+                          {projectIncome.toFixed(
+                            0
+                          )}
+                        </span>
 
-                    <span className="result-label">
-                      Регулярные
-                    </span>
+                      </div>
 
-                    <span className="result-value">
-                      {regularIncome.toFixed(
-                        0
-                      )}
-                    </span>
+                      <div className="result-row">
 
-                  </div>
+                        <span className="result-label">
+                          Регулярные
+                        </span>
 
-                  <div className="result-row">
+                        <span className="result-value">
+                          {regularIncome.toFixed(
+                            0
+                          )}
+                        </span>
 
-                    <span className="result-label">
-                      Зарплата
-                    </span>
+                      </div>
 
-                    <span className="result-value">
-                      {salaryIncome.toFixed(
-                        0
-                      )}
-                    </span>
+                      <div className="result-row">
 
-                  </div>
+                        <span className="result-label">
+                          Зарплата
+                        </span>
 
-                  <div className="result-row">
+                        <span className="result-value">
+                          {salaryIncome.toFixed(
+                            0
+                          )}
+                        </span>
 
-                    <span className="result-label">
-                      Аванс
-                    </span>
+                      </div>
 
-                    <span className="result-value">
-                      {advanceIncome.toFixed(
-                        0
-                      )}
-                    </span>
+                      <div className="result-row">
 
-                  </div>
+                        <span className="result-label">
+                          Аванс
+                        </span>
 
-                </div>
+                        <span className="result-value">
+                          {advanceIncome.toFixed(
+                            0
+                          )}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </>
+
+                )}
 
               </div>
 
-                              {/* АЛЬТАГАММА */}
+              {/* АЛЬТАГАММА */}
+              <div
+                className="card"
+                style={{
+                  marginTop: "16px",
+                }}
+              >
+
                 <div
-                  className="card"
-                  style={{ marginTop: "16px" }}
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "flex-start",
+                    marginBottom: "16px",
+                  }}
                 >
 
                   <div
                     style={{
                       display: "flex",
-                      justifyContent:
-                        "space-between",
-                      alignItems: "flex-start",
-                      marginBottom: "16px",
+                      alignItems:
+                        "center",
+                      gap: "8px",
                     }}
                   >
 
@@ -587,17 +738,91 @@ export default function Page() {
                       АЛЬТАГАММА
                     </h3>
 
+                    <button
+                      onClick={() =>
+                        setIsAltagammaCollapsed(
+                          !isAltagammaCollapsed
+                        )
+                      }
+                      style={{
+                        border: "none",
+                        background:
+                          "transparent",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {isAltagammaCollapsed
+                        ? "▼"
+                        : "▲"}
+                    </button>
+
                   </div>
 
                   <div
                     style={{
+                      textAlign: "right",
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        marginBottom: "12px",
+                      }}
+                    >
+
+                      <p className="card-label">
+                        Планируемый доход
+                      </p>
+
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {altagammaPlanned.toFixed(
+                          0
+                        )}
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="card-label">
+                        Фактический доход
+                      </p>
+
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {altagammaActual.toFixed(
+                          0
+                        )}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {!isAltagammaCollapsed && (
+
+                  <div
+                    style={{
                       display: "flex",
-                      flexDirection: "column",
+                      flexDirection:
+                        "column",
                       gap: "12px",
                     }}
                   >
 
-                    {/* ПЛАНИРУЕМЫЙ */}
                     <div>
 
                       <p className="card-label">
@@ -606,7 +831,9 @@ export default function Page() {
 
                       <input
                         type="text"
-                        value={altagammaPlannedInput}
+                        value={
+                          altagammaPlannedInput
+                        }
                         onFocus={(e) =>
                           e.target.select()
                         }
@@ -622,7 +849,6 @@ export default function Page() {
 
                     </div>
 
-                    {/* ФАКТИЧЕСКИЙ */}
                     <div>
 
                       <p className="card-label">
@@ -631,7 +857,9 @@ export default function Page() {
 
                       <input
                         type="text"
-                        value={altagammaActualInput}
+                        value={
+                          altagammaActualInput
+                        }
                         onFocus={(e) =>
                           e.target.select()
                         }
@@ -649,7 +877,184 @@ export default function Page() {
 
                   </div>
 
+                )}
+
+              </div>
+
+              {/* ПРЕМИЯ */}
+              <div
+                className="card"
+                style={{
+                  marginTop: "16px",
+                }}
+              >
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "flex-start",
+                    marginBottom: "16px",
+                  }}
+                >
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems:
+                        "center",
+                      gap: "8px",
+                    }}
+                  >
+
+                    <h3 className="card-title">
+                      ПРЕМИЯ
+                    </h3>
+
+                    <button
+                      onClick={() =>
+                        setIsBonusCollapsed(
+                          !isBonusCollapsed
+                        )
+                      }
+                      style={{
+                        border: "none",
+                        background:
+                          "transparent",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {isBonusCollapsed
+                        ? "▼"
+                        : "▲"}
+                    </button>
+
+                  </div>
+
+                  <div
+                    style={{
+                      textAlign: "right",
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        marginBottom: "12px",
+                      }}
+                    >
+
+                      <p className="card-label">
+                        Планируемый доход
+                      </p>
+
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {bonusPlanned.toFixed(
+                          0
+                        )}
+                      </p>
+
+                    </div>
+
+                    <div>
+
+                      <p className="card-label">
+                        Фактический доход
+                      </p>
+
+                      <p
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {bonusActual.toFixed(
+                          0
+                        )}
+                      </p>
+
+                    </div>
+
+                  </div>
+
                 </div>
+
+                {!isBonusCollapsed && (
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection:
+                        "column",
+                      gap: "12px",
+                    }}
+                  >
+
+                    <div>
+
+                      <p className="card-label">
+                        Планируемый доход
+                      </p>
+
+                      <input
+                        type="text"
+                        value={
+                          bonusPlannedInput
+                        }
+                        onFocus={(e) =>
+                          e.target.select()
+                        }
+                        onChange={(e) =>
+                          handleInput(
+                            e.target.value,
+                            setBonusPlannedInput,
+                            setBonusPlanned
+                          )
+                        }
+                        className="input"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <p className="card-label">
+                        Фактический доход
+                      </p>
+
+                      <input
+                        type="text"
+                        value={
+                          bonusActualInput
+                        }
+                        onFocus={(e) =>
+                          e.target.select()
+                        }
+                        onChange={(e) =>
+                          handleInput(
+                            e.target.value,
+                            setBonusActualInput,
+                            setBonusActual
+                          )
+                        }
+                        className="input"
+                      />
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
 
             </div>
 
@@ -657,56 +1062,23 @@ export default function Page() {
 
           {/* ПЛАН */}
           {activeTab === "planning" && (
-
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent:
-                  "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
+            <div className="empty-tab">
               Планирование
             </div>
-
           )}
 
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
-
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent:
-                  "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
+            <div className="empty-tab">
               Расходы
             </div>
-
           )}
 
           {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
-
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent:
-                  "center",
-                alignItems: "center",
-                color: "#6b7280",
-              }}
-            >
+            <div className="empty-tab">
               Статистика
             </div>
-
           )}
 
         </div>
