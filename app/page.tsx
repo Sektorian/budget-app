@@ -42,6 +42,16 @@ export default function Page() {
     setActualAdvanceIncome,
   ] = useState(0);
 
+  const [
+    altagammaPlanned,
+    setAltagammaPlanned,
+  ] = useState(0);
+  
+  const [
+    altagammaActual,
+    setAltagammaActual,
+  ] = useState(0);
+
   // INPUT VALUES
   const [
     baseSalaryInput,
@@ -76,6 +86,16 @@ export default function Page() {
   const [
     actualAdvanceIncomeInput,
     setActualAdvanceIncomeInput,
+  ] = useState("0");
+
+  const [
+    altagammaPlannedInput,
+    setAltagammaPlannedInput,
+  ] = useState("0");
+  
+  const [
+    altagammaActualInput,
+    setAltagammaActualInput,
   ] = useState("0");
 
   // INPUT HANDLER
@@ -546,6 +566,90 @@ export default function Page() {
                 </div>
 
               </div>
+
+                              {/* АЛЬТАГАММА */}
+                <div
+                  className="card"
+                  style={{ marginTop: "16px" }}
+                >
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent:
+                        "space-between",
+                      alignItems: "flex-start",
+                      marginBottom: "16px",
+                    }}
+                  >
+
+                    <h3 className="card-title">
+                      АЛЬТАГАММА
+                    </h3>
+
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                    }}
+                  >
+
+                    {/* ПЛАНИРУЕМЫЙ */}
+                    <div>
+
+                      <p className="card-label">
+                        Планируемый доход
+                      </p>
+
+                      <input
+                        type="text"
+                        value={altagammaPlannedInput}
+                        onFocus={(e) =>
+                          e.target.select()
+                        }
+                        onChange={(e) =>
+                          handleInput(
+                            e.target.value,
+                            setAltagammaPlannedInput,
+                            setAltagammaPlanned
+                          )
+                        }
+                        className="input"
+                      />
+
+                    </div>
+
+                    {/* ФАКТИЧЕСКИЙ */}
+                    <div>
+
+                      <p className="card-label">
+                        Фактический доход
+                      </p>
+
+                      <input
+                        type="text"
+                        value={altagammaActualInput}
+                        onFocus={(e) =>
+                          e.target.select()
+                        }
+                        onChange={(e) =>
+                          handleInput(
+                            e.target.value,
+                            setAltagammaActualInput,
+                            setAltagammaActual
+                          )
+                        }
+                        className="input"
+                      />
+
+                    </div>
+
+                  </div>
+
+                </div>
 
             </div>
 
