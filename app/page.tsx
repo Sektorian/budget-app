@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 
-import "./styles.css";
+import IncomeTab from "./tabs/IncomeTab";
+import PlanningTab from "./tabs/PlanningTab";
 
-import IncomeTab from "./components/IncomeTab";
-import PlanningTab from "./components/PlanningTab";
-import ExpensesTab from "./components/ExpensesTab";
-import StatsTab from "./components/StatsTab";
+import "./styles.css";
 
 export default function Page() {
   const [activeTab, setActiveTab] =
     useState("income");
+
+  const [
+    totalPlannedIncome,
+    setTotalPlannedIncome,
+  ] = useState(0);
 
   const tabs = [
     {
@@ -61,25 +64,69 @@ export default function Page() {
         {/* CONTENT */}
         <div className="content">
 
+          {/* ДОХОДЫ */}
           {activeTab === "income" && (
-            <IncomeTab />
+
+            <IncomeTab
+              onPlannedIncomeChange={
+                setTotalPlannedIncome
+              }
+            />
+
           )}
 
+          {/* ПЛАН */}
           {activeTab === "planning" && (
-            <PlanningTab />
+
+            <PlanningTab
+              totalPlannedIncome={
+                totalPlannedIncome
+              }
+            />
+
           )}
 
+          {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
-            <ExpensesTab />
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent:
+                  "center",
+                alignItems:
+                  "center",
+                color: "#6b7280",
+              }}
+            >
+              Расходы
+            </div>
+
           )}
 
+          {/* СТАТИСТИКА */}
           {activeTab === "stats" && (
-            <StatsTab />
+
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent:
+                  "center",
+                alignItems:
+                  "center",
+                color: "#6b7280",
+              }}
+            >
+              Статистика
+            </div>
+
           )}
 
         </div>
 
-        {/* NAVIGATION */}
+        {/* BOTTOM NAVIGATION */}
         <div className="bottom-nav">
 
           {tabs.map((tab) => (

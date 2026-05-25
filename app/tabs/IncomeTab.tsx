@@ -1,13 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+} from "react";
 
-export default function IncomeTab() {
+type IncomeTabProps = {
+  onPlannedIncomeChange: (
+    value: number
+  ) => void;
+};
+
+export default function IncomeTab({
+  onPlannedIncomeChange,
+}: IncomeTabProps) {
   const PROJECT_RATE = 0.75;
-  const PROJECT_COEFFICIENT = 0.7;
+
+  const PROJECT_COEFFICIENT =
+    0.7;
+
   const REGULAR_RATE = 0.5;
+
   const AFTER_TAX_RATE = 0.86;
 
+  // COLLAPSE
   const [
     isKompoCollapsed,
     setIsKompoCollapsed,
@@ -198,6 +214,13 @@ export default function IncomeTab() {
     altagammaActual +
     bonusActual;
 
+  // SEND TO PARENT
+  useEffect(() => {
+    onPlannedIncomeChange(
+      totalPlannedIncome
+    );
+  }, [totalPlannedIncome]);
+
   return (
     <div>
 
@@ -379,7 +402,6 @@ export default function IncomeTab() {
         {!isKompoCollapsed && (
 
           <>
-
             <div
               style={{
                 display: "flex",
@@ -390,7 +412,6 @@ export default function IncomeTab() {
             >
 
               <div>
-
                 <p className="card-label">
                   Оклад
                 </p>
@@ -412,11 +433,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
               <div>
-
                 <p className="card-label">
                   Ставка
                 </p>
@@ -438,11 +457,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
               <div>
-
                 <p className="card-label">
                   Рабочих часов в прошлом месяце
                 </p>
@@ -464,11 +481,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
               <div>
-
                 <p className="card-label">
                   ПРОЕКТНЫЕ (часы)
                 </p>
@@ -490,11 +505,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
               <div>
-
                 <p className="card-label">
                   РЕГУЛЯРНЫЕ (часы)
                 </p>
@@ -516,23 +529,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
-            </div>
-
-            <div
-              style={{
-                marginTop: "20px",
-                display: "flex",
-                flexDirection:
-                  "column",
-                gap: "12px",
-              }}
-            >
-
               <div>
-
                 <p className="card-label">
                   Фактическая зарплата
                 </p>
@@ -554,11 +553,9 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
               <div>
-
                 <p className="card-label">
                   Фактический аванс
                 </p>
@@ -580,15 +577,14 @@ export default function IncomeTab() {
                   }
                   className="input"
                 />
-
               </div>
 
             </div>
 
+            {/* RESULTS */}
             <div className="results">
 
               <div className="result-row">
-
                 <span className="result-label">
                   Проектные
                 </span>
@@ -598,11 +594,9 @@ export default function IncomeTab() {
                     0
                   )}
                 </span>
-
               </div>
 
               <div className="result-row">
-
                 <span className="result-label">
                   Регулярные
                 </span>
@@ -612,11 +606,9 @@ export default function IncomeTab() {
                     0
                   )}
                 </span>
-
               </div>
 
               <div className="result-row">
-
                 <span className="result-label">
                   Зарплата
                 </span>
@@ -626,11 +618,9 @@ export default function IncomeTab() {
                     0
                   )}
                 </span>
-
               </div>
 
               <div className="result-row">
-
                 <span className="result-label">
                   Аванс
                 </span>
@@ -640,7 +630,6 @@ export default function IncomeTab() {
                     0
                   )}
                 </span>
-
               </div>
 
             </div>
@@ -673,8 +662,7 @@ export default function IncomeTab() {
           <div
             style={{
               display: "flex",
-              alignItems:
-                "center",
+              alignItems: "center",
               gap: "8px",
             }}
           >
@@ -727,9 +715,7 @@ export default function IncomeTab() {
                   fontWeight: 700,
                 }}
               >
-                {altagammaPlanned.toFixed(
-                  0
-                )}
+                {altagammaPlanned}
               </p>
 
             </div>
@@ -746,9 +732,7 @@ export default function IncomeTab() {
                   fontWeight: 700,
                 }}
               >
-                {altagammaActual.toFixed(
-                  0
-                )}
+                {altagammaActual}
               </p>
 
             </div>
@@ -769,7 +753,6 @@ export default function IncomeTab() {
           >
 
             <div>
-
               <p className="card-label">
                 Планируемый доход
               </p>
@@ -791,11 +774,9 @@ export default function IncomeTab() {
                 }
                 className="input"
               />
-
             </div>
 
             <div>
-
               <p className="card-label">
                 Фактический доход
               </p>
@@ -817,7 +798,6 @@ export default function IncomeTab() {
                 }
                 className="input"
               />
-
             </div>
 
           </div>
@@ -848,8 +828,7 @@ export default function IncomeTab() {
           <div
             style={{
               display: "flex",
-              alignItems:
-                "center",
+              alignItems: "center",
               gap: "8px",
             }}
           >
@@ -902,9 +881,7 @@ export default function IncomeTab() {
                   fontWeight: 700,
                 }}
               >
-                {bonusPlanned.toFixed(
-                  0
-                )}
+                {bonusPlanned}
               </p>
 
             </div>
@@ -921,9 +898,7 @@ export default function IncomeTab() {
                   fontWeight: 700,
                 }}
               >
-                {bonusActual.toFixed(
-                  0
-                )}
+                {bonusActual}
               </p>
 
             </div>
@@ -944,14 +919,15 @@ export default function IncomeTab() {
           >
 
             <div>
-
               <p className="card-label">
                 Планируемый доход
               </p>
 
               <input
                 type="text"
-                value={bonusPlannedInput}
+                value={
+                  bonusPlannedInput
+                }
                 onFocus={(e) =>
                   e.target.select()
                 }
@@ -964,18 +940,18 @@ export default function IncomeTab() {
                 }
                 className="input"
               />
-
             </div>
 
             <div>
-
               <p className="card-label">
                 Фактический доход
               </p>
 
               <input
                 type="text"
-                value={bonusActualInput}
+                value={
+                  bonusActualInput
+                }
                 onFocus={(e) =>
                   e.target.select()
                 }
@@ -988,7 +964,6 @@ export default function IncomeTab() {
                 }
                 className="input"
               />
-
             </div>
 
           </div>
