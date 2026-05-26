@@ -138,6 +138,19 @@ export default function PlanningTab({
         newExpense,
       ]);
     }
+
+    // Сразу открыть редактирование
+    setEditingId(newExpense.id);
+
+    setEditName(newExpense.name);
+
+    setEditAmount(
+      newExpense.amount.toString()
+    );
+
+    setEditRequired(
+      newExpense.required
+    );
   };
 
   // DELETE EXPENSE
@@ -165,10 +178,13 @@ export default function PlanningTab({
     expense: Expense
   ) => {
     setEditingId(expense.id);
+
     setEditName(expense.name);
+
     setEditAmount(
       expense.amount.toString()
     );
+
     setEditRequired(
       expense.required
     );
@@ -315,6 +331,7 @@ export default function PlanningTab({
               </div>
 
             </div>
+
           </>
 
         ) : (
@@ -332,6 +349,9 @@ export default function PlanningTab({
             <input
               type="text"
               value={editName}
+              onFocus={(e) =>
+                e.target.select()
+              }
               onChange={(e) =>
                 setEditName(
                   e.target.value
