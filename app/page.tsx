@@ -2,33 +2,60 @@
 
 import { useState } from "react";
 
+import "./styles.css";
+
 import IncomeTab from "./tabs/IncomeTab";
 import PlanningTab from "./tabs/PlanningTab";
+import ExpensesTab from "./tabs/ExpensesTab";
 
-import "./styles.css";
+export type Expense = {
+  id: number;
+
+  name: string;
+
+  amount: number;
+
+  required: boolean;
+};
 
 export default function Page() {
   const [activeTab, setActiveTab] =
     useState("income");
 
+  // ОБЩИЙ ДОХОД
   const [
-    totalPlannedIncome,
-    setTotalPlannedIncome,
+    combinedIncome,
+    setCombinedIncome,
   ] = useState(0);
+
+  // ПЛАН 7 → 19
+  const [
+    periodOneExpenses,
+    setPeriodOneExpenses,
+  ] = useState<Expense[]>([]);
+
+  // ПЛАН 19 → 7
+  const [
+    periodTwoExpenses,
+    setPeriodTwoExpenses,
+  ] = useState<Expense[]>([]);
 
   const tabs = [
     {
       id: "income",
       label: "Доходы",
     },
+
     {
       id: "planning",
       label: "План",
     },
+
     {
       id: "expenses",
       label: "Расходы",
     },
+
     {
       id: "stats",
       label: "Статистика",
@@ -68,8 +95,8 @@ export default function Page() {
           {activeTab === "income" && (
 
             <IncomeTab
-              onPlannedIncomeChange={
-                setTotalPlannedIncome
+              onCombinedIncomeChange={
+                setCombinedIncome
               }
             />
 
@@ -80,7 +107,19 @@ export default function Page() {
 
             <PlanningTab
               totalPlannedIncome={
-                totalPlannedIncome
+                combinedIncome
+              }
+              periodOneExpenses={
+                periodOneExpenses
+              }
+              setPeriodOneExpenses={
+                setPeriodOneExpenses
+              }
+              periodTwoExpenses={
+                periodTwoExpenses
+              }
+              setPeriodTwoExpenses={
+                setPeriodTwoExpenses
               }
             />
 
@@ -89,19 +128,17 @@ export default function Page() {
           {/* РАСХОДЫ */}
           {activeTab === "expenses" && (
 
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent:
-                  "center",
-                alignItems:
-                  "center",
-                color: "#6b7280",
-              }}
-            >
-              Расходы
-            </div>
+            <ExpensesTab
+              totalPlannedIncome={
+                combinedIncome
+              }
+              periodOneExpenses={
+                periodOneExpenses
+              }
+              periodTwoExpenses={
+                periodTwoExpenses
+              }
+            />
 
           )}
 

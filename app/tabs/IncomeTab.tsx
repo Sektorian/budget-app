@@ -1,23 +1,19 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-} from "react";
+import { useEffect, useState } from "react";
 
 type IncomeTabProps = {
-  onPlannedIncomeChange: (
+  onCombinedIncomeChange: (
     value: number
   ) => void;
 };
 
 export default function IncomeTab({
-  onPlannedIncomeChange,
+  onCombinedIncomeChange,
 }: IncomeTabProps) {
   const PROJECT_RATE = 0.75;
 
-  const PROJECT_COEFFICIENT =
-    0.7;
+  const PROJECT_COEFFICIENT = 0.7;
 
   const REGULAR_RATE = 0.5;
 
@@ -25,21 +21,21 @@ export default function IncomeTab({
 
   // COLLAPSE
   const [
-    isKompoCollapsed,
-    setIsKompoCollapsed,
+    kompoCollapsed,
+    setKompoCollapsed,
   ] = useState(true);
 
   const [
-    isAltagammaCollapsed,
-    setIsAltagammaCollapsed,
+    altagammaCollapsed,
+    setAltagammaCollapsed,
   ] = useState(true);
 
   const [
-    isBonusCollapsed,
-    setIsBonusCollapsed,
+    bonusCollapsed,
+    setBonusCollapsed,
   ] = useState(true);
 
-  // NUMBER VALUES
+  // КОМПО
   const [baseSalary, setBaseSalary] =
     useState(2900);
 
@@ -69,7 +65,7 @@ export default function IncomeTab({
     setActualAdvanceIncome,
   ] = useState(0);
 
-  // ALTAGAMMA
+  // АЛЬТАГАММА
   const [
     altagammaPlanned,
     setAltagammaPlanned,
@@ -80,81 +76,23 @@ export default function IncomeTab({
     setAltagammaActual,
   ] = useState(0);
 
-  // BONUS
-  const [bonusPlanned, setBonusPlanned] =
-    useState(0);
-
-  const [bonusActual, setBonusActual] =
-    useState(0);
-
-  // INPUT VALUES
+  // ПРЕМИЯ
   const [
-    baseSalaryInput,
-    setBaseSalaryInput,
-  ] = useState("2900");
+    bonusPlanned,
+    setBonusPlanned,
+  ] = useState(0);
 
   const [
-    employmentRateInput,
-    setEmploymentRateInput,
-  ] = useState("1");
+    bonusActual,
+    setBonusActual,
+  ] = useState(0);
 
-  const [
-    workingHoursPrevMonthInput,
-    setWorkingHoursPrevMonthInput,
-  ] = useState("168");
-
-  const [
-    projectHoursInput,
-    setProjectHoursInput,
-  ] = useState("0");
-
-  const [
-    regularHoursInput,
-    setRegularHoursInput,
-  ] = useState("0");
-
-  const [
-    actualSalaryIncomeInput,
-    setActualSalaryIncomeInput,
-  ] = useState("0");
-
-  const [
-    actualAdvanceIncomeInput,
-    setActualAdvanceIncomeInput,
-  ] = useState("0");
-
-  // ALTAGAMMA INPUTS
-  const [
-    altagammaPlannedInput,
-    setAltagammaPlannedInput,
-  ] = useState("0");
-
-  const [
-    altagammaActualInput,
-    setAltagammaActualInput,
-  ] = useState("0");
-
-  // BONUS INPUTS
-  const [
-    bonusPlannedInput,
-    setBonusPlannedInput,
-  ] = useState("0");
-
-  const [
-    bonusActualInput,
-    setBonusActualInput,
-  ] = useState("0");
-
-  // INPUT HANDLER
-  const handleInput = (
-    value: string,
-    setInput: (value: string) => void,
-    setNumber: (value: number) => void
+  // HELPERS
+  const calculateValue = (
+    value: string
   ) => {
     const formatted =
       value.replace(",", ".");
-
-    setInput(formatted);
 
     try {
       const result = Function(
@@ -162,14 +100,16 @@ export default function IncomeTab({
       )();
 
       if (!isNaN(result)) {
-        setNumber(Number(result));
+        return Number(result);
       }
+
+      return 0;
     } catch {
-      // Формула ещё не завершена
+      return 0;
     }
   };
 
-  // CALCULATIONS
+  // КОМПО РАСЧЁТЫ
   const projectIncome =
     (baseSalary /
       workingHoursPrevMonth) *
@@ -197,29 +137,86 @@ export default function IncomeTab({
     regularIncome;
 
   const totalKompoIncome =
-    salaryIncome + advanceIncome;
+    salaryIncome +
+    advanceIncome;
 
   const totalActualIncome =
     actualSalaryIncome +
     actualAdvanceIncome;
 
-  // TOTALS
+  // КОМБИНИРОВАННЫЕ ДОХОДЫ
+  const kompoCombinedIncome =
+    totalActualIncome > 0
+      ? totalActualIncome
+      : totalKompoIncome;
+
+  const altagammaCombinedIncome =
+    altagammaActual > 0
+      ? altagammaActual
+      : altagammaPlanned;
+
+  const bonusCombinedIncome =
+    bonusActual > 0
+      ? bonusActual
+      : bonusPlanned;
+
+  // ИТОГО
   const totalPlannedIncome =
     totalKompoIncome +
     altagammaPlanned +
     bonusPlanned;
 
-  const totalFactIncome =
+  const totalActualCombinedIncome =
     totalActualIncome +
     altagammaActual +
     bonusActual;
 
-  // SEND TO PARENT
+  const combinedIncome =
+    kompoCombinedIncome +
+    altagammaCombinedIncome +
+    bonusCombinedIncome;
+
+  // ПЕРЕДАЧА В PAGE
   useEffect(() => {
-    onPlannedIncomeChange(
-      totalPlannedIncome
+    onCombinedIncomeChange(
+      combinedIncome
     );
-  }, [totalPlannedIncome]);
+  }, [combinedIncome]);
+
+  // INPUT
+  const renderInput = (
+    label: string,
+    value: number,
+    setter: (
+      value: number
+    ) => void
+  ) => {
+    return (
+      <div>
+
+        <p className="card-label">
+          {label}
+        </p>
+
+        <input
+          type="text"
+          defaultValue={value}
+          onFocus={(e) =>
+            e.target.select()
+          }
+          onChange={(e) =>
+            setter(
+              calculateValue(
+                e.target.value
+              )
+            )
+          }
+          className="input"
+        />
+
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -242,7 +239,8 @@ export default function IncomeTab({
           </h2>
 
           <p className="section-subtitle">
-            Планируемые и фактические поступления
+            Планируемые и фактические
+            поступления
           </p>
 
         </div>
@@ -260,7 +258,7 @@ export default function IncomeTab({
           >
 
             <p className="card-label">
-              Планируемый
+              План
             </p>
 
             <p
@@ -279,7 +277,7 @@ export default function IncomeTab({
           <div>
 
             <p className="card-label">
-              Фактический
+              Факт
             </p>
 
             <p
@@ -288,7 +286,7 @@ export default function IncomeTab({
                 fontWeight: 700,
               }}
             >
-              {totalFactIncome.toFixed(
+              {totalActualCombinedIncome.toFixed(
                 0
               )}
             </p>
@@ -316,7 +314,8 @@ export default function IncomeTab({
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems:
+                "center",
               gap: "8px",
             }}
           >
@@ -327,8 +326,8 @@ export default function IncomeTab({
 
             <button
               onClick={() =>
-                setIsKompoCollapsed(
-                  !isKompoCollapsed
+                setKompoCollapsed(
+                  !kompoCollapsed
                 )
               }
               style={{
@@ -340,7 +339,7 @@ export default function IncomeTab({
                 color: "#6b7280",
               }}
             >
-              {isKompoCollapsed
+              {kompoCollapsed
                 ? "▼"
                 : "▲"}
             </button>
@@ -355,12 +354,12 @@ export default function IncomeTab({
 
             <div
               style={{
-                marginBottom: "12px",
+                marginBottom: "10px",
               }}
             >
 
               <p className="card-label">
-                Планируемый доход
+                План
               </p>
 
               <p
@@ -379,7 +378,7 @@ export default function IncomeTab({
             <div>
 
               <p className="card-label">
-                Фактический доход
+                Факт
               </p>
 
               <p
@@ -399,7 +398,7 @@ export default function IncomeTab({
 
         </div>
 
-        {!isKompoCollapsed && (
+        {!kompoCollapsed && (
 
           <>
             <div
@@ -411,180 +410,54 @@ export default function IncomeTab({
               }}
             >
 
-              <div>
-                <p className="card-label">
-                  Оклад
-                </p>
+              {renderInput(
+                "Оклад",
+                baseSalary,
+                setBaseSalary
+              )}
 
-                <input
-                  type="text"
-                  value={
-                    baseSalaryInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setBaseSalaryInput,
-                      setBaseSalary
-                    )
-                  }
-                  className="input"
-                />
-              </div>
+              {renderInput(
+                "Ставка",
+                employmentRate,
+                setEmploymentRate
+              )}
 
-              <div>
-                <p className="card-label">
-                  Ставка
-                </p>
+              {renderInput(
+                "Рабочих часов в прошлом месяце",
+                workingHoursPrevMonth,
+                setWorkingHoursPrevMonth
+              )}
 
-                <input
-                  type="text"
-                  value={
-                    employmentRateInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setEmploymentRateInput,
-                      setEmploymentRate
-                    )
-                  }
-                  className="input"
-                />
-              </div>
+              {renderInput(
+                "ПРОЕКТНЫЕ (часы)",
+                projectHours,
+                setProjectHours
+              )}
 
-              <div>
-                <p className="card-label">
-                  Рабочих часов в прошлом месяце
-                </p>
+              {renderInput(
+                "РЕГУЛЯРНЫЕ (часы)",
+                regularHours,
+                setRegularHours
+              )}
 
-                <input
-                  type="text"
-                  value={
-                    workingHoursPrevMonthInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setWorkingHoursPrevMonthInput,
-                      setWorkingHoursPrevMonth
-                    )
-                  }
-                  className="input"
-                />
-              </div>
+              {renderInput(
+                "Фактическая зарплата",
+                actualSalaryIncome,
+                setActualSalaryIncome
+              )}
 
-              <div>
-                <p className="card-label">
-                  ПРОЕКТНЫЕ (часы)
-                </p>
-
-                <input
-                  type="text"
-                  value={
-                    projectHoursInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setProjectHoursInput,
-                      setProjectHours
-                    )
-                  }
-                  className="input"
-                />
-              </div>
-
-              <div>
-                <p className="card-label">
-                  РЕГУЛЯРНЫЕ (часы)
-                </p>
-
-                <input
-                  type="text"
-                  value={
-                    regularHoursInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setRegularHoursInput,
-                      setRegularHours
-                    )
-                  }
-                  className="input"
-                />
-              </div>
-
-              <div>
-                <p className="card-label">
-                  Фактическая зарплата
-                </p>
-
-                <input
-                  type="text"
-                  value={
-                    actualSalaryIncomeInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setActualSalaryIncomeInput,
-                      setActualSalaryIncome
-                    )
-                  }
-                  className="input"
-                />
-              </div>
-
-              <div>
-                <p className="card-label">
-                  Фактический аванс
-                </p>
-
-                <input
-                  type="text"
-                  value={
-                    actualAdvanceIncomeInput
-                  }
-                  onFocus={(e) =>
-                    e.target.select()
-                  }
-                  onChange={(e) =>
-                    handleInput(
-                      e.target.value,
-                      setActualAdvanceIncomeInput,
-                      setActualAdvanceIncome
-                    )
-                  }
-                  className="input"
-                />
-              </div>
+              {renderInput(
+                "Фактический аванс",
+                actualAdvanceIncome,
+                setActualAdvanceIncome
+              )}
 
             </div>
 
-            {/* RESULTS */}
             <div className="results">
 
               <div className="result-row">
+
                 <span className="result-label">
                   Проектные
                 </span>
@@ -594,9 +467,11 @@ export default function IncomeTab({
                     0
                   )}
                 </span>
+
               </div>
 
               <div className="result-row">
+
                 <span className="result-label">
                   Регулярные
                 </span>
@@ -606,9 +481,11 @@ export default function IncomeTab({
                     0
                   )}
                 </span>
+
               </div>
 
               <div className="result-row">
+
                 <span className="result-label">
                   Зарплата
                 </span>
@@ -618,9 +495,11 @@ export default function IncomeTab({
                     0
                   )}
                 </span>
+
               </div>
 
               <div className="result-row">
+
                 <span className="result-label">
                   Аванс
                 </span>
@@ -630,6 +509,7 @@ export default function IncomeTab({
                     0
                   )}
                 </span>
+
               </div>
 
             </div>
@@ -662,19 +542,20 @@ export default function IncomeTab({
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems:
+                "center",
               gap: "8px",
             }}
           >
 
             <h3 className="card-title">
-              АЛЬТАГАММА
+              Альтагамма
             </h3>
 
             <button
               onClick={() =>
-                setIsAltagammaCollapsed(
-                  !isAltagammaCollapsed
+                setAltagammaCollapsed(
+                  !altagammaCollapsed
                 )
               }
               style={{
@@ -686,7 +567,7 @@ export default function IncomeTab({
                 color: "#6b7280",
               }}
             >
-              {isAltagammaCollapsed
+              {altagammaCollapsed
                 ? "▼"
                 : "▲"}
             </button>
@@ -701,12 +582,12 @@ export default function IncomeTab({
 
             <div
               style={{
-                marginBottom: "12px",
+                marginBottom: "10px",
               }}
             >
 
               <p className="card-label">
-                Планируемый доход
+                План
               </p>
 
               <p
@@ -723,7 +604,7 @@ export default function IncomeTab({
             <div>
 
               <p className="card-label">
-                Фактический доход
+                Факт
               </p>
 
               <p
@@ -741,7 +622,7 @@ export default function IncomeTab({
 
         </div>
 
-        {!isAltagammaCollapsed && (
+        {!altagammaCollapsed && (
 
           <div
             style={{
@@ -752,53 +633,17 @@ export default function IncomeTab({
             }}
           >
 
-            <div>
-              <p className="card-label">
-                Планируемый доход
-              </p>
+            {renderInput(
+              "Планируемый доход",
+              altagammaPlanned,
+              setAltagammaPlanned
+            )}
 
-              <input
-                type="text"
-                value={
-                  altagammaPlannedInput
-                }
-                onFocus={(e) =>
-                  e.target.select()
-                }
-                onChange={(e) =>
-                  handleInput(
-                    e.target.value,
-                    setAltagammaPlannedInput,
-                    setAltagammaPlanned
-                  )
-                }
-                className="input"
-              />
-            </div>
-
-            <div>
-              <p className="card-label">
-                Фактический доход
-              </p>
-
-              <input
-                type="text"
-                value={
-                  altagammaActualInput
-                }
-                onFocus={(e) =>
-                  e.target.select()
-                }
-                onChange={(e) =>
-                  handleInput(
-                    e.target.value,
-                    setAltagammaActualInput,
-                    setAltagammaActual
-                  )
-                }
-                className="input"
-              />
-            </div>
+            {renderInput(
+              "Фактический доход",
+              altagammaActual,
+              setAltagammaActual
+            )}
 
           </div>
 
@@ -828,19 +673,20 @@ export default function IncomeTab({
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems:
+                "center",
               gap: "8px",
             }}
           >
 
             <h3 className="card-title">
-              ПРЕМИЯ
+              Премия
             </h3>
 
             <button
               onClick={() =>
-                setIsBonusCollapsed(
-                  !isBonusCollapsed
+                setBonusCollapsed(
+                  !bonusCollapsed
                 )
               }
               style={{
@@ -852,7 +698,7 @@ export default function IncomeTab({
                 color: "#6b7280",
               }}
             >
-              {isBonusCollapsed
+              {bonusCollapsed
                 ? "▼"
                 : "▲"}
             </button>
@@ -867,12 +713,12 @@ export default function IncomeTab({
 
             <div
               style={{
-                marginBottom: "12px",
+                marginBottom: "10px",
               }}
             >
 
               <p className="card-label">
-                Планируемый доход
+                План
               </p>
 
               <p
@@ -889,7 +735,7 @@ export default function IncomeTab({
             <div>
 
               <p className="card-label">
-                Фактический доход
+                Факт
               </p>
 
               <p
@@ -907,7 +753,7 @@ export default function IncomeTab({
 
         </div>
 
-        {!isBonusCollapsed && (
+        {!bonusCollapsed && (
 
           <div
             style={{
@@ -918,53 +764,17 @@ export default function IncomeTab({
             }}
           >
 
-            <div>
-              <p className="card-label">
-                Планируемый доход
-              </p>
+            {renderInput(
+              "Планируемый доход",
+              bonusPlanned,
+              setBonusPlanned
+            )}
 
-              <input
-                type="text"
-                value={
-                  bonusPlannedInput
-                }
-                onFocus={(e) =>
-                  e.target.select()
-                }
-                onChange={(e) =>
-                  handleInput(
-                    e.target.value,
-                    setBonusPlannedInput,
-                    setBonusPlanned
-                  )
-                }
-                className="input"
-              />
-            </div>
-
-            <div>
-              <p className="card-label">
-                Фактический доход
-              </p>
-
-              <input
-                type="text"
-                value={
-                  bonusActualInput
-                }
-                onFocus={(e) =>
-                  e.target.select()
-                }
-                onChange={(e) =>
-                  handleInput(
-                    e.target.value,
-                    setBonusActualInput,
-                    setBonusActual
-                  )
-                }
-                className="input"
-              />
-            </div>
+            {renderInput(
+              "Фактический доход",
+              bonusActual,
+              setBonusActual
+            )}
 
           </div>
 

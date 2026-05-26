@@ -2,19 +2,32 @@
 
 import { useState } from "react";
 
-type Expense = {
-  id: number;
-  name: string;
-  amount: number;
-  required: boolean;
-};
+import type { Expense } from "../page";
 
 type PlanningTabProps = {
   totalPlannedIncome: number;
+
+  periodOneExpenses: Expense[];
+
+  setPeriodOneExpenses: React.Dispatch<
+    React.SetStateAction<Expense[]>
+  >;
+
+  periodTwoExpenses: Expense[];
+
+  setPeriodTwoExpenses: React.Dispatch<
+    React.SetStateAction<Expense[]>
+  >;
 };
 
 export default function PlanningTab({
   totalPlannedIncome,
+
+  periodOneExpenses,
+  setPeriodOneExpenses,
+
+  periodTwoExpenses,
+  setPeriodTwoExpenses,
 }: PlanningTabProps) {
   const [
     periodOneCollapsed,
@@ -25,38 +38,6 @@ export default function PlanningTab({
     periodTwoCollapsed,
     setPeriodTwoCollapsed,
   ] = useState(true);
-
-  // PERIOD 1
-  const [
-    periodOneExpenses,
-    setPeriodOneExpenses,
-  ] = useState<Expense[]>([
-    {
-      id: 1,
-      name: "Аренда",
-      amount: 850,
-      required: true,
-    },
-    {
-      id: 2,
-      name: "Интернет",
-      amount: 25,
-      required: true,
-    },
-  ]);
-
-  // PERIOD 2
-  const [
-    periodTwoExpenses,
-    setPeriodTwoExpenses,
-  ] = useState<Expense[]>([
-    {
-      id: 3,
-      name: "Бензин",
-      amount: 100,
-      required: false,
-    },
-  ]);
 
   // EDITING
   const [editingId, setEditingId] =
