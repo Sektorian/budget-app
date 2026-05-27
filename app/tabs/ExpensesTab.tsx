@@ -275,7 +275,7 @@ export default function ExpensesTab({
       <div
         key={expense.id}
         style={{
-          padding: "16px 0",
+          padding: "14px 0",
           borderBottom:
             "1px solid #e5e7eb",
         }}
@@ -283,22 +283,28 @@ export default function ExpensesTab({
 
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns:
-              "1fr 90px 120px",
-            alignItems: "start",
-            columnGap: "20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            width: "100%",
           }}
         >
 
           {/* LEFT */}
-          <div>
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
 
             <div
               style={{
-                fontSize: "18px",
+                fontSize: "16px",
                 fontWeight: 600,
                 marginBottom: "4px",
+                wordBreak:
+                  "break-word",
               }}
             >
               {expense.name}
@@ -306,7 +312,7 @@ export default function ExpensesTab({
 
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "12px",
                 color: "#6b7280",
               }}
             >
@@ -320,15 +326,17 @@ export default function ExpensesTab({
           {/* PLAN */}
           <div
             style={{
+              width: "70px",
               textAlign: "center",
+              flexShrink: 0,
             }}
           >
 
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "12px",
                 color: "#6b7280",
-                marginBottom: "10px",
+                marginBottom: "6px",
               }}
             >
               План
@@ -336,7 +344,7 @@ export default function ExpensesTab({
 
             <div
               style={{
-                fontSize: "20px",
+                fontSize: "18px",
                 fontWeight: 700,
               }}
             >
@@ -348,15 +356,17 @@ export default function ExpensesTab({
           {/* FACT */}
           <div
             style={{
+              width: "88px",
               textAlign: "center",
+              flexShrink: 0,
             }}
           >
 
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "12px",
                 color: "#6b7280",
-                marginBottom: "10px",
+                marginBottom: "6px",
               }}
             >
               Факт
@@ -381,6 +391,9 @@ export default function ExpensesTab({
               className="input"
               style={{
                 textAlign: "center",
+                padding:
+                  "8px 6px",
+                fontSize: "14px",
               }}
             />
 
@@ -628,6 +641,7 @@ export default function ExpensesTab({
             "space-between",
           alignItems: "flex-start",
           marginBottom: "16px",
+          gap: "12px",
         }}
       >
 
@@ -646,6 +660,7 @@ export default function ExpensesTab({
         <div
           style={{
             textAlign: "right",
+            flexShrink: 0,
           }}
         >
 
@@ -661,7 +676,7 @@ export default function ExpensesTab({
 
             <p
               style={{
-                fontSize: "22px",
+                fontSize: "20px",
                 fontWeight: 700,
               }}
             >
@@ -682,7 +697,7 @@ export default function ExpensesTab({
 
             <p
               style={{
-                fontSize: "22px",
+                fontSize: "20px",
                 fontWeight: 700,
               }}
             >
@@ -699,7 +714,7 @@ export default function ExpensesTab({
 
             <p
               style={{
-                fontSize: "22px",
+                fontSize: "20px",
                 fontWeight: 700,
               }}
             >
