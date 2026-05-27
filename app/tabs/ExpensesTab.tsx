@@ -177,9 +177,13 @@ export default function ExpensesTab({
       0
     );
 
-  // ОСТАТОК
+  // ФАКТИЧЕСКИЙ ДОХОД
+  const actualIncome =
+    totalPlannedIncome;
+
+  // ОСТАТОК НА КАРТЕ
   const balance =
-    totalPlannedIncome -
+    actualIncome -
     totalFact;
 
   // ПЛАНИРУЕМЫЙ ОСТАТОК
@@ -692,7 +696,7 @@ export default function ExpensesTab({
           >
 
             <p className="card-label">
-              Остаток
+              Остаток на карте
             </p>
 
             <p
