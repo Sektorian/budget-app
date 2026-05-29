@@ -333,13 +333,7 @@ export default function Home() {
           )}
 
           {activeTab === "stats" && (
-            <StatsTab
-              totalIncome={totalActualCombinedIncome}
-              totalExpenses={totalFactExpenses}
-              balance={balance}
-              plannedIncome={totalPlannedIncome}
-              plannedExpenses={totalPlannedExpensesSum}
-            />
+            <StatsTab />
           )}
         </div>
 
