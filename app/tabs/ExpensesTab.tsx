@@ -6,6 +6,7 @@ import type { Expense } from "../page";
 
 type ExpensesTabProps = {
   totalPlannedIncome: number;
+
   totalActualIncome: number;
 
   periodOneExpenses: Expense[];
@@ -27,6 +28,7 @@ type ExtraExpense = {
 
 export default function ExpensesTab({
   totalPlannedIncome,
+
   totalActualIncome,
 
   periodOneExpenses,
@@ -179,10 +181,13 @@ export default function ExpensesTab({
       0
     );
 
-    // ОСТАТОК НА КАРТЕ
+  // ОСТАТОК НА КАРТЕ
   const balance =
     totalActualIncome -
-    totalFact;
+    (
+      plannedFactTotal +
+      extraTotal
+    );
 
   // ПЛАНИРУЕМЫЙ ОСТАТОК
   const plannedBalance =

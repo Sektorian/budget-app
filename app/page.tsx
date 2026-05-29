@@ -1,193 +1,137 @@
 "use client";
 
-import { useState } from "react";
-
-import "./styles.css";
+import { useState, useEffect } from "react";  // ← ДОБАВИТЬ useEffect в импорт
 
 import IncomeTab from "./tabs/IncomeTab";
 import PlanningTab from "./tabs/PlanningTab";
 import ExpensesTab from "./tabs/ExpensesTab";
+import StatsTab from "./tabs/StatsTab";
+
+import "./styles.css";
 
 export type Expense = {
   id: number;
-
   name: string;
-
   amount: number;
-
   required: boolean;
 };
 
 export default function Page() {
-  const [activeTab, setActiveTab] =
-    useState("income");
+  const [activeTab, setActiveTab] = useState("income");
 
-  // ОБЩИЙ ДОХОД
-  const [
-    combinedIncome,
-    setCombinedIncome,
-  ] = useState(0);
+  // ДОХОДЫ
+  const [totalPlannedIncome, setTotalPlannedIncome] = useState(0);
+  const [totalActualCombinedIncome, setTotalActualCombinedIncome] = useState(0);
+  const [combinedIncome, setCombinedIncome] = useState(0);
 
-  // ПЛАН 7 → 19
-  const [
-    periodOneExpenses,
-    setPeriodOneExpenses,
-  ] = useState<Expense[]>([]);
+  // ПЛАН
+  const [periodOneExpenses, setPeriodOneExpenses] = useState<Expense[]>([]);
+  const [periodTwoExpenses, setPeriodTwoExpenses] = useState<Expense[]>([]);
 
-  // ПЛАН 19 → 7
-  const [
-    periodTwoExpenses,
-    setPeriodTwoExpenses,
-  ] = useState<Expense[]>([]);
+  
+  // 1. ЗАГРУЗКА ДАННЫХ ПРИ СТАРТЕ
+  useEffect(() => {
+    const saved = localStorage.getItem("householdBudget");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setPeriodOneExpenses(data.periodOneExpenses || []);
+        setPeriodTwoExpenses(data.periodTwoExpenses || []);
+        setTotalPlannedIncome(data.totalPlannedIncome || 0);
+        setTotalActualCombinedIncome(data.totalActualCombinedIncome || 0);
+        setCombinedIncome(data.combinedIncome || 0);
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+      }
+    }
+  }, []); // Пустой массив = выполняется только один раз при загрузке
+
+  // 2. СОХРАНЕНИЕ ДАННЫХ ПРИ ИЗМЕНЕНИИ
+  useEffect(() => {
+    const data = {
+      periodOneExpenses,
+      periodTwoExpenses,
+      totalPlannedIncome,
+      totalActualCombinedIncome,
+      combinedIncome,
+    };
+    localStorage.setItem("householdBudget", JSON.stringify(data));
+  }, [
+    periodOneExpenses, 
+    periodTwoExpenses, 
+    totalPlannedIncome, 
+    totalActualCombinedIncome, 
+    combinedIncome
+  ]); // Срабатывает при изменении любой из этих переменных
+
+
 
   const tabs = [
-    {
-      id: "income",
-      label: "Доходы",
-    },
-
-    {
-      id: "planning",
-      label: "План",
-    },
-
-    {
-      id: "expenses",
-      label: "Расходы",
-    },
-
-    {
-      id: "stats",
-      label: "Статистика",
-    },
+    { id: "income", label: "Доходы" },
+    { id: "planning", label: "План" },
+    { id: "expenses", label: "Расходы" },
+    { id: "stats", label: "Статистика" },
   ];
 
   return (
     <div className="app-container">
-
       <div className="phone-frame">
-
         {/* HEADER */}
         <div className="header">
-
           <div>
-
-            <p className="header-subtitle">
-              Текущий период
-            </p>
-
-            <h1 className="header-title">
-              Май 2026
-            </h1>
-
+            <p className="header-subtitle">Текущий период</p>
+            <h1 className="header-title">Май 2026</h1>
           </div>
-
-          <button className="month-button">
-            М
-          </button>
-
+          <button className="month-button">М</button>
         </div>
 
         {/* CONTENT */}
         <div className="content">
-
-          {/* ДОХОДЫ */}
           {activeTab === "income" && (
-
             <IncomeTab
-              onCombinedIncomeChange={
-                setCombinedIncome
-              }
-            />
-
-          )}
-
-          {/* ПЛАН */}
-          {activeTab === "planning" && (
-
-            <PlanningTab
-              totalPlannedIncome={
-                combinedIncome
-              }
-              periodOneExpenses={
-                periodOneExpenses
-              }
-              setPeriodOneExpenses={
-                setPeriodOneExpenses
-              }
-              periodTwoExpenses={
-                periodTwoExpenses
-              }
-              setPeriodTwoExpenses={
-                setPeriodTwoExpenses
-              }
-            />
-
-          )}
-
-          {/* РАСХОДЫ */}
-          {activeTab === "expenses" && (
-
-            <ExpensesTab
-              totalPlannedIncome={
-                combinedIncome
-              }
-              periodOneExpenses={
-                periodOneExpenses
-              }
-              periodTwoExpenses={
-                periodTwoExpenses
-              }
-            />
-
-          )}
-
-          {/* СТАТИСТИКА */}
-          {activeTab === "stats" && (
-
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent:
-                  "center",
-                alignItems:
-                  "center",
-                color: "#6b7280",
+              onTotalsChange={(planned, actual) => {
+                setTotalPlannedIncome(planned);
+                setTotalActualCombinedIncome(actual);
               }}
-            >
-              Статистика
-            </div>
-
+              onCombinedIncomeChange={(value) => setCombinedIncome(value)}
+            />
           )}
 
+          {activeTab === "planning" && (
+            <PlanningTab
+              totalPlannedIncome={totalPlannedIncome}
+              periodOneExpenses={periodOneExpenses}
+              setPeriodOneExpenses={setPeriodOneExpenses}
+              periodTwoExpenses={periodTwoExpenses}
+              setPeriodTwoExpenses={setPeriodTwoExpenses}
+            />
+          )}
+
+          {activeTab === "expenses" && (
+            <ExpensesTab
+              totalPlannedIncome={combinedIncome}
+              totalActualIncome={totalActualCombinedIncome}
+              periodOneExpenses={periodOneExpenses}
+              periodTwoExpenses={periodTwoExpenses}
+            />
+          )}
+
+          {activeTab === "stats" && <StatsTab />}
         </div>
 
-        {/* BOTTOM NAVIGATION */}
+        {/* BOTTOM NAV */}
         <div className="bottom-nav">
-
           {tabs.map((tab) => (
-
             <button
               key={tab.id}
-              onClick={() =>
-                setActiveTab(tab.id)
-              }
-              className={
-                activeTab === tab.id
-                  ? "nav-button active"
-                  : "nav-button"
-              }
+              onClick={() => setActiveTab(tab.id)}
+              className={activeTab === tab.id ? "nav-button active" : "nav-button"}
             >
               {tab.label}
             </button>
-
           ))}
-
         </div>
-
       </div>
-
     </div>
   );
 }
