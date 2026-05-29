@@ -98,6 +98,8 @@ export default function ExpensesTab({
 
   const renderPlannedExpense = (expense: Expense) => {
     const currentActualValue = getActualValue(expense.id);
+    // Создаём уникальный ключ, который обновляется при изменении значения
+    const inputKey = `${expense.id}_${currentActualValue}`;
     
     return (
       <div key={expense.id} style={{ padding: "14px 0", borderBottom: "1px solid #e5e7eb" }}>
@@ -114,7 +116,7 @@ export default function ExpensesTab({
             <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>Факт</div>
             <input
               type="text"
-              key={expense.id}
+              key={inputKey}
               defaultValue={currentActualValue !== 0 ? currentActualValue : ""}
               placeholder="0"
               onFocus={(e) => e.target.select()}
