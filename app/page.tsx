@@ -77,21 +77,18 @@ export default function Home() {
   // Функция копирования обязательных расходов
   const copyMandatoryExpensesToMonth = async (targetYearMonth: string) => {
     try {
-      // Получаем обязательные расходы из periodOneExpenses
       const periodOneCollection = getCollectionName("periodOneExpenses");
       const periodOneSnapshot = await getDocs(collection(db, periodOneCollection));
       const mandatoryPeriodOne = periodOneSnapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
         .filter(expense => expense.required === true);
       
-      // Получаем обязательные расходы из periodTwoExpenses
       const periodTwoCollection = getCollectionName("periodTwoExpenses");
       const periodTwoSnapshot = await getDocs(collection(db, periodTwoCollection));
       const mandatoryPeriodTwo = periodTwoSnapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
         .filter(expense => expense.required === true);
       
-      // Копируем в целевой месяц
       const targetPeriodOneCollection = `periodOneExpenses_${targetYearMonth}`;
       const targetPeriodTwoCollection = `periodTwoExpenses_${targetYearMonth}`;
       
@@ -224,7 +221,6 @@ export default function Home() {
   };
 
   const handleCopyToNextMonth = async () => {
-    // Вычисляем следующий месяц
     let nextYear = selectedYear;
     let nextMonth = selectedMonth + 1;
     if (nextMonth > 12) {
