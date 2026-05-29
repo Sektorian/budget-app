@@ -89,38 +89,45 @@ export default function ExpensesTab({
     setEditingId(null);
   };
 
+  // Вычисляем суммы для остатка на карте
   const extraTotal = extraExpenses.reduce((sum, item) => sum + item.amount, 0);
   const plannedFactTotal = actualExpenses.reduce((sum, item) => sum + item.actualAmount, 0);
   const totalFact = plannedFactTotal + extraTotal;
+  // Остаток на карте = комбинированный доход минус все фактические траты
   const balance = totalActualIncome - totalFact;
   const totalPlannedExpenses = [...periodOneExpenses, ...periodTwoExpenses].reduce((sum, expense) => sum + expense.amount, 0);
   const plannedBalance = totalPlannedIncome - totalPlannedExpenses - extraTotal;
 
-  const renderPlannedExpense = (expense: Expense) => (
-    <div key={expense.id} style={{ padding: "14px 0", borderBottom: "1px solid #e5e7eb" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%" }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "16px", fontWeight: 600, marginBottom: "4px", wordBreak: "break-word" }}>{expense.name}</div>
-          <div style={{ fontSize: "12px", color: "#6b7280" }}>{expense.required ? "Обязательный" : "Дополнительный"}</div>
-        </div>
-        <div style={{ width: "70px", textAlign: "center", flexShrink: 0 }}>
-          <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>План</div>
-          <div style={{ fontSize: "18px", fontWeight: 700 }}>{expense.amount}</div>
-        </div>
-        <div style={{ width: "88px", textAlign: "center", flexShrink: 0 }}>
-          <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>Факт</div>
-          <input
-            type="text"
-            defaultValue={getActualValue(expense.id) || "0"}
-            onFocus={(e) => e.target.select()}
-            onChange={(e) => updateActualValue(expense.id, e.target.value)}
-            className="input"
-            style={{ textAlign: "center", padding: "8px 6px", fontSize: "14px" }}
-          />
+  const renderPlannedExpense = (expense: Expense) => {
+    const currentActualValue = getActualValue(expense.id);
+    
+    return (
+      <div key={expense.id} style={{ padding: "14px 0", borderBottom: "1px solid #e5e7eb" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: "16px", fontWeight: 600, marginBottom: "4px", wordBreak: "break-word" }}>{expense.name}</div>
+            <div style={{ fontSize: "12px", color: "#6b7280" }}>{expense.required ? "Обязательный" : "Дополнительный"}</div>
+          </div>
+          <div style={{ width: "70px", textAlign: "center", flexShrink: 0 }}>
+            <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>План</div>
+            <div style={{ fontSize: "18px", fontWeight: 700 }}>{expense.amount}</div>
+          </div>
+          <div style={{ width: "88px", textAlign: "center", flexShrink: 0 }}>
+            <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>Факт</div>
+            <input
+              type="text"
+              value={currentActualValue || ""}
+              placeholder="0"
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => updateActualValue(expense.id, e.target.value)}
+              className="input"
+              style={{ textAlign: "center", padding: "8px 6px", fontSize: "14px" }}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderExtraExpense = (expense: ExtraExpense) => {
     const isEditing = editingId === expense.id;
@@ -172,11 +179,11 @@ export default function ExpensesTab({
           </div>
           <div style={{ marginBottom: "10px" }}>
             <p className="card-label">Остаток на карте</p>
-            <p style={{ fontSize: "20px", fontWeight: 700 }}>{balance}</p>
+            <p style={{ fontSize: "20px", fontWeight: 700 }}>{balance.toFixed(1)}</p>
           </div>
           <div>
             <p className="card-label">Планируемый остаток</p>
-            <p style={{ fontSize: "20px", fontWeight: 700 }}>{plannedBalance}</p>
+            <p style={{ fontSize: "20px", fontWeight: 700 }}>{plannedBalance.toFixed(1)}</p>
           </div>
         </div>
       </div>
