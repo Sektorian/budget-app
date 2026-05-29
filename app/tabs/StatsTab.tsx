@@ -31,7 +31,6 @@ export default function StatsTab() {
     return `${year}-${String(month).padStart(2, '0')}`;
   };
 
-  // Функция для получения всех месяцев между двумя датами
   const getMonthsInRange = (startY: number, startM: number, endY: number, endM: number): { year: number; month: number; yearMonth: string }[] => {
     const result = [];
     let currentYear = startY;
@@ -52,7 +51,6 @@ export default function StatsTab() {
     return result;
   };
 
-  // Загрузка данных за выбранный период
   const loadPeriodData = async () => {
     setIsLoading(true);
     const months = getMonthsInRange(startYear, startMonth, endYear, endMonth);
@@ -70,7 +68,6 @@ export default function StatsTab() {
           const incomeDoc = incomeSnapshot.docs[0];
           const incomeData = incomeDoc.data();
           
-          // Рассчитываем фактический доход
           const actualSalaryIncome = incomeData.actualSalaryIncome || 0;
           const actualAdvanceIncome = incomeData.actualAdvanceIncome || 0;
           const altagammaActual = incomeData.altagammaActual || 0;
@@ -78,15 +75,28 @@ export default function StatsTab() {
           monthIncome = actualSalaryIncome + actualAdvanceIncome + altagammaActual + bonusActual;
         }
 
-        // ПОЛУЧАЕМ ФАКТИЧЕСКИЕ РАСХОДЫ за месяц
+        // Получаем ФАКТИЧЕСКИЕ расходы из actualExpenses
         const actualExpensesCollection = `actualExpenses_${month.yearMonth}`;
-        let monthExpenses = 0;
+        let monthActualExpenses = 0;
         
         const actualExpensesSnapshot = await getDocs(collection(db, actualExpensesCollection));
         actualExpensesSnapshot.docs.forEach(doc => {
           const expense = doc.data();
-          monthExpenses += expense.actualAmount || 0;
+          monthActualExpenses += expense.actualAmount || 0;
         });
+
+        // Получаем ВНЕПЛАНОВЫЕ расходы из extraExpenses
+        const extraExpensesCollection = `extraExpenses_${month.yearMonth}`;
+        let monthExtraExpenses = 0;
+        
+        const extraExpensesSnapshot = await getDocs(collection(db, extraExpensesCollection));
+        extraExpensesSnapshot.docs.forEach(doc => {
+          const expense = doc.data();
+          monthExtraExpenses += expense.amount || 0;
+        });
+
+        // Общая сумма расходов = фактические + внеплановые
+        const monthExpenses = monthActualExpenses + monthExtraExpenses;
 
         totalInc += monthIncome;
         totalExp += monthExpenses;
@@ -112,7 +122,6 @@ export default function StatsTab() {
     setIsLoading(false);
   };
 
-  // Загрузка при изменении периода
   useEffect(() => {
     loadPeriodData();
   }, [startYear, startMonth, endYear, endMonth]);
@@ -156,7 +165,6 @@ export default function StatsTab() {
         </div>
       </div>
 
-      {/* Выбор периода */}
       <div className="card">
         <h3 className="card-title" style={{ marginBottom: "16px" }}>Выбор периода</h3>
         <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
@@ -226,7 +234,6 @@ export default function StatsTab() {
         </div>
       ) : (
         <>
-          {/* Итоги за период */}
           <div className="card" style={{ marginTop: "16px" }}>
             <h3 className="card-title" style={{ marginBottom: "16px" }}>Итоги за период</h3>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
@@ -249,7 +256,6 @@ export default function StatsTab() {
             </div>
           </div>
 
-          {/* Таблица по месяцам */}
           <div className="card" style={{ marginTop: "16px", overflowX: "auto" }}>
             <h3 className="card-title" style={{ marginBottom: "16px" }}>Детализация по месяцам</h3>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -274,7 +280,7 @@ export default function StatsTab() {
                       <td style={{ textAlign: "right", padding: "8px 4px", color: "#ef4444" }}>
                         {month.expenses.toFixed(0)}
                        </td>
-                    </tr>
+                     </tr>
                   );
                 })}
               </tbody>
