@@ -78,22 +78,14 @@ export default function StatsTab() {
           monthIncome = actualSalaryIncome + actualAdvanceIncome + altagammaActual + bonusActual;
         }
 
-        // Получаем расходы за месяц
-        const periodOneCollection = `periodOneExpenses_${month.yearMonth}`;
-        const periodTwoCollection = `periodTwoExpenses_${month.yearMonth}`;
-        
+        // ПОЛУЧАЕМ ФАКТИЧЕСКИЕ РАСХОДЫ за месяц
+        const actualExpensesCollection = `actualExpenses_${month.yearMonth}`;
         let monthExpenses = 0;
         
-        const periodOneSnapshot = await getDocs(collection(db, periodOneCollection));
-        periodOneSnapshot.docs.forEach(doc => {
+        const actualExpensesSnapshot = await getDocs(collection(db, actualExpensesCollection));
+        actualExpensesSnapshot.docs.forEach(doc => {
           const expense = doc.data();
-          monthExpenses += expense.amount || 0;
-        });
-        
-        const periodTwoSnapshot = await getDocs(collection(db, periodTwoCollection));
-        periodTwoSnapshot.docs.forEach(doc => {
-          const expense = doc.data();
-          monthExpenses += expense.amount || 0;
+          monthExpenses += expense.actualAmount || 0;
         });
 
         totalInc += monthIncome;
@@ -282,7 +274,7 @@ export default function StatsTab() {
                       <td style={{ textAlign: "right", padding: "8px 4px", color: "#ef4444" }}>
                         {month.expenses.toFixed(0)}
                        </td>
-                     </tr>
+                    </tr>
                   );
                 })}
               </tbody>

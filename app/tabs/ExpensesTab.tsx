@@ -49,14 +49,14 @@ export default function ExpensesTab({
     return isNaN(num) ? 0 : num;
   };
 
-  const getActualValue = (id: string) => {
-    const item = actualExpenses.find(expense => expense.id === id);
+  const getActualValue = (expenseId: string) => {
+    const item = actualExpenses.find(expense => expense.expenseId === expenseId);
     return item ? item.actualAmount : 0;
   };
 
-  const updateActualValue = (id: string, value: string) => {
+  const updateActualValue = (expenseId: string, value: string) => {
     const amount = calculateValue(value);
-    onUpdateActualExpense(id, amount);
+    onUpdateActualExpense(expenseId, amount);
   };
 
   const addExtraExpense = () => {
@@ -98,7 +98,6 @@ export default function ExpensesTab({
 
   const renderPlannedExpense = (expense: Expense) => {
     const currentActualValue = getActualValue(expense.id);
-    // Создаём уникальный ключ, который обновляется при изменении значения
     const inputKey = `${expense.id}_${currentActualValue}`;
     
     return (
@@ -155,15 +154,43 @@ export default function ExpensesTab({
           </>
         ) : (
           <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
-            <input type="text" value={editName} onFocus={(e) => e.target.select()} onChange={(e) => setEditName(e.target.value)} className="input" />
-            <input type="text" value={editAmount} onFocus={(e) => e.target.select()} onChange={(e) => setEditAmount(e.target.value)} className="input" />
+            <input
+              type="text"
+              value={editName}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => setEditName(e.target.value)}
+              className="input"
+            />
+            <input
+              type="text"
+              value={editAmount}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => setEditAmount(e.target.value)}
+              className="input"
+            />
             <label style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "14px" }}>
-              <input type="checkbox" checked={editRequired} onChange={(e) => setEditRequired(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={editRequired}
+                onChange={(e) => setEditRequired(e.target.checked)}
+              />
               Обязательный
             </label>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={saveEdit} className="nav-button" style={{ width: "auto", padding: "8px 14px", background: "black", color: "white" }}>OK</button>
-              <button onClick={() => setEditingId(null)} className="nav-button" style={{ width: "auto", padding: "8px 14px" }}>Отмена</button>
+              <button
+                onClick={saveEdit}
+                className="nav-button"
+                style={{ width: "auto", padding: "8px 14px", background: "black", color: "white" }}
+              >
+                OK
+              </button>
+              <button
+                onClick={() => setEditingId(null)}
+                className="nav-button"
+                style={{ width: "auto", padding: "8px 14px" }}
+              >
+                Отмена
+              </button>
             </div>
           </div>
         )}
@@ -199,7 +226,11 @@ export default function ExpensesTab({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <h3 className="card-title">7 → 19</h3>
-            <button onClick={() => setPeriodOneCollapsed(!periodOneCollapsed)} className="nav-button" style={{ width: "auto", padding: "4px 8px" }}>
+            <button
+              onClick={() => setPeriodOneCollapsed(!periodOneCollapsed)}
+              className="nav-button"
+              style={{ width: "auto", padding: "4px 8px" }}
+            >
               {periodOneCollapsed ? "▼" : "▲"}
             </button>
           </div>
@@ -212,7 +243,11 @@ export default function ExpensesTab({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <h3 className="card-title">19 → 7</h3>
-            <button onClick={() => setPeriodTwoCollapsed(!periodTwoCollapsed)} className="nav-button" style={{ width: "auto", padding: "4px 8px" }}>
+            <button
+              onClick={() => setPeriodTwoCollapsed(!periodTwoCollapsed)}
+              className="nav-button"
+              style={{ width: "auto", padding: "4px 8px" }}
+            >
               {periodTwoCollapsed ? "▼" : "▲"}
             </button>
           </div>
@@ -226,7 +261,11 @@ export default function ExpensesTab({
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <h3 className="card-title" style={{ color: "#92400e" }}>💰 10%</h3>
-              <button onClick={() => setTenPercentCollapsed(!tenPercentCollapsed)} className="nav-button" style={{ width: "auto", padding: "4px 8px" }}>
+              <button
+                onClick={() => setTenPercentCollapsed(!tenPercentCollapsed)}
+                className="nav-button"
+                style={{ width: "auto", padding: "4px 8px" }}
+              >
                 {tenPercentCollapsed ? "▼" : "▲"}
               </button>
             </div>
@@ -253,7 +292,11 @@ export default function ExpensesTab({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <h3 className="card-title">Внеплановые расходы</h3>
-            <button onClick={() => setExtraCollapsed(!extraCollapsed)} className="nav-button" style={{ width: "auto", padding: "4px 8px" }}>
+            <button
+              onClick={() => setExtraCollapsed(!extraCollapsed)}
+              className="nav-button"
+              style={{ width: "auto", padding: "4px 8px" }}
+            >
               {extraCollapsed ? "▼" : "▲"}
             </button>
           </div>
@@ -266,12 +309,18 @@ export default function ExpensesTab({
           <>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {extraExpenses.length === 0 ? (
-                <div style={{ textAlign: "center", color: "#6b7280", padding: "20px 0" }}>Здесь пока нет расходов</div>
+                <div style={{ textAlign: "center", color: "#6b7280", padding: "20px 0" }}>
+                  Здесь пока нет расходов
+                </div>
               ) : (
                 extraExpenses.map(renderExtraExpense)
               )}
             </div>
-            <button onClick={addExtraExpense} className="nav-button" style={{ width: "100%", marginTop: "16px", padding: "12px", border: "1px dashed #9ca3af", background: "transparent" }}>
+            <button
+              onClick={addExtraExpense}
+              className="nav-button"
+              style={{ width: "100%", marginTop: "16px", padding: "12px", border: "1px dashed #9ca3af", background: "transparent" }}
+            >
               + Добавить расход
             </button>
           </>

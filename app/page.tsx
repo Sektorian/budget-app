@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase";
 import IncomeTab from "./tabs/IncomeTab";
 import PlanningTab from "./tabs/PlanningTab";
@@ -18,6 +18,7 @@ export type Expense = {
 
 export type ActualExpense = {
   id: string;
+  expenseId: string;
   actualAmount: number;
 };
 
@@ -186,13 +187,29 @@ export default function Home() {
     await deleteDoc(doc(db, collectionName, id));
   };
 
-  const updateActualExpense = async (id: string, actualAmount: number) => {
+  const updateActualExpense = async (expenseId: string, actualAmount: number) => {
     const collectionName = getCollectionName("actualExpenses");
-    const existing = actualExpenses.find(e => e.id === id);
-    if (existing) {
-      await updateDoc(doc(db, collectionName, id), { actualAmount });
-    } else {
-      await addDoc(collection(db, collectionName), { id, actualAmount });
+    
+    try {
+      // Ищем существующий документ с таким expenseId
+      const q = query(collection(db, collectionName), where("expenseId", "==", expenseId));
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        // Обновляем существующий документ
+        const docRef = doc(db, collectionName, snapshot.docs[0].id);
+        await updateDoc(docRef, { actualAmount });
+        console.log(`Обновлён расход ${expenseId}: ${actualAmount}`);
+      } else {
+        // Создаём новый документ
+        await addDoc(collection(db, collectionName), {
+          expenseId: expenseId,
+          actualAmount: actualAmount,
+        });
+        console.log(`Создан новый расход ${expenseId}: ${actualAmount}`);
+      }
+    } catch (error) {
+      console.error("Ошибка при обновлении фактического расхода:", error);
     }
   };
 
