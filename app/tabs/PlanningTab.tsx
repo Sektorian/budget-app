@@ -243,7 +243,7 @@ export default function PlanningTab({
           </div>
           <div>
             <p className="card-label">Остаток</p>
-            <p style={{ fontSize: "22px", fontWeight: 700 }}>{balance}</p>
+            <p style={{ fontSize: "22px", fontWeight: 700 }}>{balance.toFixed(1)}</p>
           </div>
         </div>
       </div>
