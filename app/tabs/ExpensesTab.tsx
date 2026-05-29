@@ -89,11 +89,9 @@ export default function ExpensesTab({
     setEditingId(null);
   };
 
-  // Вычисляем суммы для остатка на карте
   const extraTotal = extraExpenses.reduce((sum, item) => sum + item.amount, 0);
   const plannedFactTotal = actualExpenses.reduce((sum, item) => sum + item.actualAmount, 0);
   const totalFact = plannedFactTotal + extraTotal;
-  // Остаток на карте = комбинированный доход минус все фактические траты
   const balance = totalActualIncome - totalFact;
   const totalPlannedExpenses = [...periodOneExpenses, ...periodTwoExpenses].reduce((sum, expense) => sum + expense.amount, 0);
   const plannedBalance = totalPlannedIncome - totalPlannedExpenses - extraTotal;
@@ -116,10 +114,16 @@ export default function ExpensesTab({
             <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>Факт</div>
             <input
               type="text"
-              value={currentActualValue || ""}
+              key={expense.id}
+              defaultValue={currentActualValue !== 0 ? currentActualValue : ""}
               placeholder="0"
               onFocus={(e) => e.target.select()}
-              onChange={(e) => updateActualValue(expense.id, e.target.value)}
+              onBlur={(e) => {
+                const val = e.target.value;
+                if (val !== "" && val !== "-") {
+                  updateActualValue(expense.id, val);
+                }
+              }}
               className="input"
               style={{ textAlign: "center", padding: "8px 6px", fontSize: "14px" }}
             />
