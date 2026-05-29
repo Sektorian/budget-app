@@ -204,7 +204,7 @@ export default function PlanningTab({
               <p style={{ fontSize: "14px", color: "#92400e" }}>
                 📊 Этот расход автоматически рассчитывается как <strong>10% от комбинированного дохода</strong>.
                 <br />
-                Текущий доход: <strong>{combinedIncome} ₽</strong> → 10% = <strong>{tenPercentAmount} ₽</strong>
+                Текущий доход: <strong>{combinedIncome} Br</strong> → 10% = <strong>{tenPercentAmount} Br</strong>
               </p>
             </div>
             
