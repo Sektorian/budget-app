@@ -178,10 +178,11 @@ export default function Home() {
 
   const addPlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => {
     const collectionName = getCollectionName(period);
-    await addDoc(collection(db, collectionName), {
+    const docRef = await addDoc(collection(db, collectionName), {
       ...expense,
       createdAt: Date.now(),
     });
+    return docRef.id;
   };
 
   const updatePlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string, data: Partial<Expense>) => {
@@ -219,10 +220,11 @@ export default function Home() {
 
   const addExtraExpense = async (expense: Omit<ExtraExpense, 'id'>) => {
     const collectionName = getCollectionName("extraExpenses");
-    await addDoc(collection(db, collectionName), {
+    const docRef = await addDoc(collection(db, collectionName), {
       ...expense,
       createdAt: Date.now(),
     });
+    return docRef.id;
   };
 
   const updateExtraExpense = async (id: string, data: Partial<ExtraExpense>) => {

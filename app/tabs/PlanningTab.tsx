@@ -7,7 +7,7 @@ type PlanningTabProps = {
   totalPlannedIncome: number;
   periodOneExpenses: Expense[];
   periodTwoExpenses: Expense[];
-  addExpenseToFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => Promise<void>;
+  addExpenseToFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => Promise<string>;
   updateExpenseInFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string, data: Partial<Expense>) => Promise<void>;
   deleteExpenseFromFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string) => Promise<void>;
   combinedIncome?: number;
@@ -60,11 +60,17 @@ export default function PlanningTab({
 
   const addExpense = async (period: 1 | 2) => {
     const periodName = period === 1 ? 'periodOneExpenses' : 'periodTwoExpenses';
-    await addExpenseToFirebase(periodName, {
+    const newId = await addExpenseToFirebase(periodName, {
       name: "Новый расход",
       amount: 0,
       required: false,
     });
+    
+    setEditingId(newId);
+    setEditingPeriod(period);
+    setEditName("Новый расход");
+    setEditAmount("0");
+    setEditRequired(false);
   };
 
   const addTenPercentExpense = async () => {
@@ -91,10 +97,18 @@ export default function PlanningTab({
       if (confirm("Удалить расход '10%'? Он перестанет автоматически рассчитываться.")) {
         const periodName = period === 1 ? 'periodOneExpenses' : 'periodTwoExpenses';
         await deleteExpenseFromFirebase(periodName, id);
+        if (editingId === id) {
+          setEditingId(null);
+          setEditingPeriod(null);
+        }
       }
     } else {
       const periodName = period === 1 ? 'periodOneExpenses' : 'periodTwoExpenses';
       await deleteExpenseFromFirebase(periodName, id);
+      if (editingId === id) {
+        setEditingId(null);
+        setEditingPeriod(null);
+      }
     }
   };
 
@@ -162,10 +176,27 @@ export default function PlanningTab({
           </>
         ) : (
           <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
-            <input type="text" value={editName} onFocus={(e) => e.target.select()} onChange={(e) => setEditName(e.target.value)} className="input" />
-            <input type="text" value={editAmount} onFocus={(e) => e.target.select()} onChange={(e) => setEditAmount(e.target.value)} className="input" />
+            <input 
+              type="text" 
+              value={editName} 
+              onFocus={(e) => e.target.select()} 
+              onChange={(e) => setEditName(e.target.value)} 
+              className="input" 
+              autoFocus
+            />
+            <input 
+              type="text" 
+              value={editAmount} 
+              onFocus={(e) => e.target.select()} 
+              onChange={(e) => setEditAmount(e.target.value)} 
+              className="input" 
+            />
             <label style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "14px" }}>
-              <input type="checkbox" checked={editRequired} onChange={(e) => setEditRequired(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={editRequired}
+                onChange={(e) => setEditRequired(e.target.checked)}
+              />
               Обязательный
             </label>
             <div style={{ display: "flex", gap: "10px" }}>
