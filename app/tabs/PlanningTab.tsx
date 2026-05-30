@@ -7,7 +7,7 @@ type PlanningTabProps = {
   totalPlannedIncome: number;
   periodOneExpenses: Expense[];
   periodTwoExpenses: Expense[];
-  addExpenseToFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => Promise<string>;
+  addExpenseToFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id' | 'createdAt'>) => Promise<string>;
   updateExpenseInFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string, data: Partial<Expense>) => Promise<void>;
   deleteExpenseFromFirebase: (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string) => Promise<void>;
   combinedIncome?: number;

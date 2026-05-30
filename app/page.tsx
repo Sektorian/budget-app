@@ -176,7 +176,7 @@ export default function Home() {
     setSelectedYearMonth(formatYearMonth(year, month));
   };
 
-  const addPlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => {
+  const addPlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id' | 'createdAt'>) => {
     const collectionName = getCollectionName(period);
     const docRef = await addDoc(collection(db, collectionName), {
       ...expense,
@@ -218,7 +218,7 @@ export default function Home() {
     }
   };
 
-  const addExtraExpense = async (expense: Omit<ExtraExpense, 'id'>) => {
+  const addExtraExpense = async (expense: Omit<ExtraExpense, 'id' | 'createdAt'>) => {
     const collectionName = getCollectionName("extraExpenses");
     const docRef = await addDoc(collection(db, collectionName), {
       ...expense,
