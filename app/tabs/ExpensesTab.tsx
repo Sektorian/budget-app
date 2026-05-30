@@ -11,7 +11,7 @@ type ExpensesTabProps = {
   actualExpenses: ActualExpense[];
   extraExpenses: ExtraExpense[];
   onUpdateActualExpense: (id: string, actualAmount: number) => Promise<void>;
-  onAddExtraExpense: (expense: Omit<ExtraExpense, 'id'>) => Promise<string>;
+  onAddExtraExpense: (expense: Omit<ExtraExpense, 'id' | 'createdAt'>) => Promise<string>;
   onUpdateExtraExpense: (id: string, data: Partial<ExtraExpense>) => Promise<void>;
   onDeleteExtraExpense: (id: string) => Promise<void>;
 };
