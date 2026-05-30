@@ -31,13 +31,10 @@ export default function PlanningTab({
   const [editRequired, setEditRequired] = useState(false);
   const [editingPeriod, setEditingPeriod] = useState<1 | 2 | null>(null);
 
-  // Находим расход 10%
   const tenPercentExpense = [...periodOneExpenses, ...periodTwoExpenses].find(e => e.name === "10%");
-  // Остальные расходы (без 10%)
   const otherPeriodOneExpenses = periodOneExpenses.filter(e => e.name !== "10%");
   const otherPeriodTwoExpenses = periodTwoExpenses.filter(e => e.name !== "10%");
 
-  // Автоматическое обновление суммы 10% при изменении дохода
   useEffect(() => {
     if (tenPercentExpense) {
       const newAmount = Math.round(combinedIncome * 0.1);
@@ -181,7 +178,6 @@ export default function PlanningTab({
     );
   };
 
-  // Специальная карточка для 10%
   const renderTenPercentCard = () => {
     return (
       <div className="card" style={{ marginTop: "16px", border: "1px solid #f59e0b", background: "#fffbeb" }}>
@@ -204,7 +200,7 @@ export default function PlanningTab({
               <p style={{ fontSize: "14px", color: "#92400e" }}>
                 📊 Этот расход автоматически рассчитывается как <strong>10% от комбинированного дохода</strong>.
                 <br />
-                Текущий доход: <strong>{combinedIncome} Br</strong> → 10% = <strong>{tenPercentAmount} Br</strong>
+                Текущий доход: <strong>{combinedIncome} ₽</strong> → 10% = <strong>{tenPercentAmount} ₽</strong>
               </p>
             </div>
             
@@ -248,7 +244,6 @@ export default function PlanningTab({
         </div>
       </div>
 
-      {/* PERIOD 1 (без 10%) */}
       <div className="card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -274,7 +269,6 @@ export default function PlanningTab({
         )}
       </div>
 
-      {/* PERIOD 2 (без 10%) */}
       <div className="card" style={{ marginTop: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -300,7 +294,6 @@ export default function PlanningTab({
         )}
       </div>
 
-      {/* КАРТОЧКА 10% В САМОМ НИЗУ */}
       {renderTenPercentCard()}
     </div>
   );

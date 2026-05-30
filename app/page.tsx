@@ -14,6 +14,7 @@ export type Expense = {
   name: string;
   amount: number;
   required: boolean;
+  createdAt: number;
 };
 
 export type ActualExpense = {
@@ -27,6 +28,7 @@ export type ExtraExpense = {
   name: string;
   amount: number;
   required: boolean;
+  createdAt: number;
 };
 
 export type IncomeData = {
@@ -75,7 +77,6 @@ export default function Home() {
     return `${baseName}_${selectedYearMonth}`;
   };
 
-  // Функция копирования обязательных расходов
   const copyMandatoryExpensesToMonth = async (targetYearMonth: string) => {
     try {
       const periodOneCollection = getCollectionName("periodOneExpenses");
@@ -98,6 +99,7 @@ export default function Home() {
           name: expense.name,
           amount: expense.amount,
           required: true,
+          createdAt: Date.now(),
         });
       }
       
@@ -106,6 +108,7 @@ export default function Home() {
           name: expense.name,
           amount: expense.amount,
           required: true,
+          createdAt: Date.now(),
         });
       }
       
@@ -115,7 +118,6 @@ export default function Home() {
     }
   };
 
-  // Подписки на Firebase
   useEffect(() => {
     setLoading(true);
     
@@ -127,12 +129,14 @@ export default function Home() {
 
     const unsubscribe1 = onSnapshot(collection(db, periodOneCollection), (snapshot) => {
       const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense));
-      setPeriodOneExpenses(expenses);
+      const sortedExpenses = [...expenses].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setPeriodOneExpenses(sortedExpenses);
     });
 
     const unsubscribe2 = onSnapshot(collection(db, periodTwoCollection), (snapshot) => {
       const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense));
-      setPeriodTwoExpenses(expenses);
+      const sortedExpenses = [...expenses].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setPeriodTwoExpenses(sortedExpenses);
     });
 
     const unsubscribe3 = onSnapshot(collection(db, actualCollection), (snapshot) => {
@@ -142,7 +146,8 @@ export default function Home() {
 
     const unsubscribe4 = onSnapshot(collection(db, extraCollection), (snapshot) => {
       const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ExtraExpense));
-      setExtraExpenses(expenses);
+      const sortedExpenses = [...expenses].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      setExtraExpenses(sortedExpenses);
       setLoading(false);
     });
 
@@ -171,10 +176,12 @@ export default function Home() {
     setSelectedYearMonth(formatYearMonth(year, month));
   };
 
-  // Firebase операции
   const addPlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', expense: Omit<Expense, 'id'>) => {
     const collectionName = getCollectionName(period);
-    await addDoc(collection(db, collectionName), expense);
+    await addDoc(collection(db, collectionName), {
+      ...expense,
+      createdAt: Date.now(),
+    });
   };
 
   const updatePlannedExpense = async (period: 'periodOneExpenses' | 'periodTwoExpenses', id: string, data: Partial<Expense>) => {
@@ -191,17 +198,14 @@ export default function Home() {
     const collectionName = getCollectionName("actualExpenses");
     
     try {
-      // Ищем существующий документ с таким expenseId
       const q = query(collection(db, collectionName), where("expenseId", "==", expenseId));
       const snapshot = await getDocs(q);
       
       if (!snapshot.empty) {
-        // Обновляем существующий документ
         const docRef = doc(db, collectionName, snapshot.docs[0].id);
         await updateDoc(docRef, { actualAmount });
         console.log(`Обновлён расход ${expenseId}: ${actualAmount}`);
       } else {
-        // Создаём новый документ
         await addDoc(collection(db, collectionName), {
           expenseId: expenseId,
           actualAmount: actualAmount,
@@ -215,7 +219,10 @@ export default function Home() {
 
   const addExtraExpense = async (expense: Omit<ExtraExpense, 'id'>) => {
     const collectionName = getCollectionName("extraExpenses");
-    await addDoc(collection(db, collectionName), expense);
+    await addDoc(collection(db, collectionName), {
+      ...expense,
+      createdAt: Date.now(),
+    });
   };
 
   const updateExtraExpense = async (id: string, data: Partial<ExtraExpense>) => {
