@@ -77,46 +77,81 @@ export default function Home() {
     return `${baseName}_${selectedYearMonth}`;
   };
 
-  const copyMandatoryExpensesToMonth = async (targetYearMonth: string) => {
-    try {
-      const periodOneCollection = getCollectionName("periodOneExpenses");
-      const periodOneSnapshot = await getDocs(collection(db, periodOneCollection));
-      const mandatoryPeriodOne = periodOneSnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
-        .filter(expense => expense.required === true);
+  // Автоматическое копирование обязательных расходов при смене месяца
+  useEffect(() => {
+    const autoCopyMandatoryExpenses = async () => {
+      const currentYearMonth = formatYearMonth(selectedYear, selectedMonth);
       
-      const periodTwoCollection = getCollectionName("periodTwoExpenses");
-      const periodTwoSnapshot = await getDocs(collection(db, periodTwoCollection));
-      const mandatoryPeriodTwo = periodTwoSnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
-        .filter(expense => expense.required === true);
-      
-      const targetPeriodOneCollection = `periodOneExpenses_${targetYearMonth}`;
-      const targetPeriodTwoCollection = `periodTwoExpenses_${targetYearMonth}`;
-      
-      for (const expense of mandatoryPeriodOne) {
-        await addDoc(collection(db, targetPeriodOneCollection), {
-          name: expense.name,
-          amount: expense.amount,
-          required: true,
-          createdAt: Date.now(),
-        });
+      // Получаем следующий месяц
+      let nextYear = selectedYear;
+      let nextMonth = selectedMonth + 1;
+      if (nextMonth > 12) {
+        nextYear = selectedYear + 1;
+        nextMonth = 1;
       }
+      const nextYearMonth = formatYearMonth(nextYear, nextMonth);
       
-      for (const expense of mandatoryPeriodTwo) {
-        await addDoc(collection(db, targetPeriodTwoCollection), {
-          name: expense.name,
-          amount: expense.amount,
-          required: true,
-          createdAt: Date.now(),
-        });
+      // Проверяем, есть ли уже расходы в следующем месяце
+      const nextPeriodOneCollection = `periodOneExpenses_${nextYearMonth}`;
+      const nextPeriodTwoCollection = `periodTwoExpenses_${nextYearMonth}`;
+      
+      try {
+        const nextPeriodOneSnapshot = await getDocs(collection(db, nextPeriodOneCollection));
+        const nextPeriodTwoSnapshot = await getDocs(collection(db, nextPeriodTwoCollection));
+        
+        // Если в следующем месяце уже есть расходы — не копируем
+        if (!nextPeriodOneSnapshot.empty || !nextPeriodTwoSnapshot.empty) {
+          console.log(`В следующем месяце (${nextYearMonth}) уже есть расходы, копирование пропущено`);
+          return;
+        }
+        
+        // Получаем обязательные расходы из текущего месяца
+        const currentPeriodOneCollection = `periodOneExpenses_${currentYearMonth}`;
+        const currentPeriodTwoCollection = `periodTwoExpenses_${currentYearMonth}`;
+        
+        const periodOneSnapshot = await getDocs(collection(db, currentPeriodOneCollection));
+        const periodTwoSnapshot = await getDocs(collection(db, currentPeriodTwoCollection));
+        
+        const mandatoryPeriodOne = periodOneSnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
+          .filter(expense => expense.required === true && expense.name !== "10%");
+        
+        const mandatoryPeriodTwo = periodTwoSnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() } as Expense))
+          .filter(expense => expense.required === true && expense.name !== "10%");
+        
+        if (mandatoryPeriodOne.length === 0 && mandatoryPeriodTwo.length === 0) {
+          console.log("Нет обязательных расходов для копирования");
+          return;
+        }
+        
+        // Копируем в следующий месяц
+        for (const expense of mandatoryPeriodOne) {
+          await addDoc(collection(db, nextPeriodOneCollection), {
+            name: expense.name,
+            amount: expense.amount,
+            required: true,
+            createdAt: Date.now(),
+          });
+        }
+        
+        for (const expense of mandatoryPeriodTwo) {
+          await addDoc(collection(db, nextPeriodTwoCollection), {
+            name: expense.name,
+            amount: expense.amount,
+            required: true,
+            createdAt: Date.now(),
+          });
+        }
+        
+        console.log(`✅ Автоматически скопировано ${mandatoryPeriodOne.length + mandatoryPeriodTwo.length} обязательных расходов на ${nextYearMonth}`);
+      } catch (error) {
+        console.error("Ошибка при автоматическом копировании:", error);
       }
-      
-      console.log(`Скопировано ${mandatoryPeriodOne.length + mandatoryPeriodTwo.length} обязательных расходов`);
-    } catch (error) {
-      console.error("Ошибка при копировании:", error);
-    }
-  };
+    };
+    
+    autoCopyMandatoryExpenses();
+  }, [selectedYear, selectedMonth]);
 
   useEffect(() => {
     setLoading(true);
@@ -246,19 +281,6 @@ export default function Home() {
     }
   };
 
-  const handleCopyToNextMonth = async () => {
-    let nextYear = selectedYear;
-    let nextMonth = selectedMonth + 1;
-    if (nextMonth > 12) {
-      nextYear = selectedYear + 1;
-      nextMonth = 1;
-    }
-    const nextYearMonth = formatYearMonth(nextYear, nextMonth);
-    
-    await copyMandatoryExpensesToMonth(nextYearMonth);
-    alert(`Обязательные расходы скопированы на ${nextMonth}.${nextYear}`);
-  };
-
   const totalPlannedExpensesSum = [...periodOneExpenses, ...periodTwoExpenses].reduce((sum, e) => sum + e.amount, 0);
   const actualExpensesSum = actualExpenses.reduce((sum, item) => sum + item.actualAmount, 0);
   const extraExpensesSum = extraExpenses.reduce((sum, item) => sum + item.amount, 0);
@@ -297,21 +319,11 @@ export default function Home() {
               {monthNames[selectedMonth - 1]} {selectedYear}
             </h1>
           </div>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
-              onClick={handleCopyToNextMonth}
-              className="month-button"
-              style={{ width: "auto", padding: "0 12px", fontSize: "12px" }}
-              title="Скопировать обязательные расходы на следующий месяц"
-            >
-              📋 Копировать
-            </button>
-            <MonthPicker
-              year={selectedYear}
-              month={selectedMonth}
-              onMonthChange={handleMonthChange}
-            />
-          </div>
+          <MonthPicker
+            year={selectedYear}
+            month={selectedMonth}
+            onMonthChange={handleMonthChange}
+          />
         </div>
 
         <div className="content">
