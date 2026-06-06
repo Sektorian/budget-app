@@ -38,8 +38,15 @@ export default function ExpensesTab({
   const [editRequired, setEditRequired] = useState(false);
 
   const tenPercentExpense = [...periodOneExpenses, ...periodTwoExpenses].find(e => e.name === "10%");
-  const otherPeriodOneExpenses = periodOneExpenses.filter(e => e.name !== "10%");
-  const otherPeriodTwoExpenses = periodTwoExpenses.filter(e => e.name !== "10%");
+  
+  // Сортируем расходы по алфавиту (исключая 10%)
+  const otherPeriodOneExpenses = periodOneExpenses
+    .filter(e => e.name !== "10%")
+    .sort((a, b) => a.name.localeCompare(b.name));
+    
+  const otherPeriodTwoExpenses = periodTwoExpenses
+    .filter(e => e.name !== "10%")
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const calculateValue = (value: string): number => {
     const cleaned = value.trim().replace(',', '.');
